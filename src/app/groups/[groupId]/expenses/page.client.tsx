@@ -3,6 +3,7 @@
 import { ActiveUserModal } from '@/app/groups/[groupId]/expenses/active-user-modal'
 import { CreateFromReceiptButton } from '@/app/groups/[groupId]/expenses/create-from-receipt-button'
 import { ExpenseList } from '@/app/groups/[groupId]/expenses/expense-list'
+import { ImportCsvButton } from '@/app/groups/[groupId]/expenses/import-csv-button'
 import { MiniDashboard } from '@/app/groups/[groupId]/expenses/mini-dashboard'
 import { TrackPage } from '@/components/track-page'
 import ExportButton from '@/app/groups/[groupId]/export-button'
@@ -39,6 +40,7 @@ export default function GroupExpensesPageClient({
           </div>
           <div className="flex items-center gap-1.5">
             <ExportButton groupId={groupId} />
+            <ImportCsvButton />
             {enableReceiptExtract && <CreateFromReceiptButton />}
             <Button asChild size="sm" className="bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/20 dark:shadow-blue-600/15">
               <Link

@@ -1,12 +1,20 @@
 import { GroupTabs } from '@/app/groups/[groupId]/group-tabs'
+import { JoinGroupButton } from '@/app/groups/[groupId]/join-group-button'
 import { ShareButton } from '@/app/groups/[groupId]/share-button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useActiveUser } from '@/lib/hooks'
 import { Users } from 'lucide-react'
 import Link from 'next/link'
 import { useCurrentGroup } from './current-group-context'
 
 export const GroupHeader = () => {
   const { isLoading, groupId, group } = useCurrentGroup()
+  const activeUserId = useActiveUser(groupId)
+
+  // Check if the active user is a participant in this group
+  const isParticipant = !isLoading && group && activeUserId && activeUserId !== 'None'
+    ? group.participants.some((p) => p.id === activeUserId)
+    : false
 
   return (
     <div className="sticky top-0 z-40 -mx-4 px-4 pt-4 pb-2 bg-gradient-to-b from-background/95 via-background/95 to-transparent backdrop-blur-md">
@@ -27,7 +35,10 @@ export const GroupHeader = () => {
             </h1>
           </div>
         </div>
-        {group && <ShareButton group={group} />}
+        <div className="flex items-center gap-2">
+          {!isParticipant && !isLoading && group && <JoinGroupButton />}
+          {group && <ShareButton group={group} />}
+        </div>
       </div>
       <GroupTabs groupId={groupId} />
     </div>

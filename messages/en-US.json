@@ -187,6 +187,23 @@
     "warning": "Warning:",
     "warningHelp": "Anyone with this link can view and edit this group."
   },
+  "JoinGroup": {
+    "join": "Join Group",
+    "title": "Join this group",
+    "description": "Enter your name to join {groupName} as a participant.",
+    "nameLabel": "Your name",
+    "namePlaceholder": "Enter your display name...",
+    "joining": "Joining..."
+  },
+  "LeaveGroup": {
+    "leave": "Leave Group",
+    "confirmTitle": "Leave group?",
+    "confirmDescription": "Are you sure you want to leave this group? You can rejoin later with a different name.",
+    "leaving": "Leaving...",
+    "hasExpenses": "Cannot leave. You have expenses in this group.",
+    "toastSuccess": "You have left the group.",
+    "toastError": "Failed to leave group."
+  },
   "GroupForm": {
     "title": "Group Details",
     "NameField": {
@@ -383,6 +400,31 @@
       "title": "Upload failed",
       "description": "An error occurred while uploading the file.",
       "retry": "Retry"
+    }
+  },
+  "ImportCsv": {
+    "button": "Import CSV",
+    "title": "Import Expenses from CSV",
+    "description": "Upload a CSV file from the JointSettle CSV export or a compatible format.",
+    "dropzone": {
+      "title": "Drop CSV file here or click to browse",
+      "description": "Supports the JointSettle CSV export format and other common expense formats."
+    },
+    "format": {
+      "title": "Accepted CSV format",
+      "line1": "Supports the JointSettle export format with columns: Date, Description, Category, Cost",
+      "line2": "Participant columns (names) after split mode will be used for expense splitting.",
+      "line3": "Flexible column naming: Date/date, Description/title, Cost/amount, etc."
+    },
+    "changeFile": "Change file",
+    "import": "Import expenses",
+    "importing": "Importing expenses...",
+    "toastSuccess": "{count} expense(s) imported successfully!",
+    "toastError": "Failed to import CSV",
+    "result": {
+      "imported": "{count} expense(s) imported successfully.",
+      "errors": "{count} error(s) found:",
+      "importMore": "Import another file"
     }
   },
   "CreateFromReceipt": {

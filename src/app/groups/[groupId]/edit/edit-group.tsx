@@ -1,9 +1,10 @@
 'use client'
 
+import { LeaveGroupButton } from '@/app/groups/[groupId]/leave-group-button'
 import { GroupForm } from '@/components/group-form'
 import { trpc } from '@/trpc/client'
 import { useAuth } from '@/components/auth-provider'
-import { Settings } from 'lucide-react'
+import { LogOut, Settings } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCurrentGroup } from '../current-group-context'
 
@@ -38,6 +39,23 @@ export const EditGroup = () => {
         }}
         protectedParticipantIds={data?.participantsWithExpenses}
       />
+
+      {/* Danger Zone */}
+      <div className="mt-8 rounded-xl border border-red-200/30 dark:border-red-900/20 bg-white/50 dark:bg-white/[0.03] backdrop-blur-sm p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30 flex items-center justify-center">
+            <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
+          </div>
+          <div>
+            <h2 className="font-heading font-bold text-lg text-red-700 dark:text-red-400">Leave Group</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Remove yourself from this group</p>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          You can leave this group if you no longer want to participate. You can rejoin later using a shared link.
+        </p>
+        <LeaveGroupButton />
+      </div>
     </>
   )
 }
