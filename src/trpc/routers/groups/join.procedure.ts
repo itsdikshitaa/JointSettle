@@ -45,6 +45,7 @@ export const joinGroupProcedure = baseProcedure
         id: randomId(),
         name,
         groupId,
+        joinedAt: new Date(),
       },
     })
 

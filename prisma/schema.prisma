@@ -39,6 +39,8 @@ model Participant {
   name            String
   group           Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         String
+  joinedAt        DateTime         @default(now())
+  leftAt          DateTime?
   expensesPaidBy  Expense[]
   expensesPaidFor ExpensePaidFor[]
 }

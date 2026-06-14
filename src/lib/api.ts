@@ -38,6 +38,7 @@ export async function createGroup(groupFormValues: GroupFormValues, hash: string
             return validParticipants.map(({ name }) => ({
               id: randomId(),
               name,
+              joinedAt: new Date(),
             }))
           })(),
         },
@@ -331,23 +332,30 @@ export async function updateGroup(
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
       participants: {
-        deleteMany: existingGroup.participants.filter(
-          (p) => !groupFormValues.participants.some((p2) => p2.id === p.id),
-        ),
-        updateMany: groupFormValues.participants
-          .filter((participant) => participant.id !== undefined)
-          .map((participant) => ({
-            where: { id: participant.id },
-            data: {
-              name: participant.name,
-            },
-          })),
+        // Soft-delete removed participants by setting leftAt
+        updateMany: [
+          ...groupFormValues.participants
+            .filter((participant) => participant.id !== undefined)
+            .map((participant) => ({
+              where: { id: participant.id },
+              data: {
+                name: participant.name,
+              },
+            })),
+          ...existingGroup.participants
+            .filter((p) => !groupFormValues.participants.some((p2) => p2.id === p.id))
+            .map((p) => ({
+              where: { id: p.id, leftAt: null },
+              data: { leftAt: new Date() },
+            })),
+        ],
         createMany: {
           data: groupFormValues.participants
             .filter((participant) => participant.id === undefined)
             .map((participant) => ({
               id: randomId(),
               name: participant.name,
+              joinedAt: new Date(),
             })),
         },
       },

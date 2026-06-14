@@ -42,9 +42,10 @@ export const leaveGroupProcedure = baseProcedure
       })
     }
 
-    // Remove the participant
-    await prisma.participant.delete({
+    // Mark the participant as left instead of hard-deleting
+    await prisma.participant.update({
       where: { id: participantId },
+      data: { leftAt: new Date() },
     })
 
     return { success: true }
