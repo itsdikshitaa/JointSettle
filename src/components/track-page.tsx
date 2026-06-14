@@ -53,8 +53,6 @@ export function useAnalytics() {
 
   const sendEvent = ({ event, props }: Event, path = '/') => {
     const url = `${window.location.origin}${path}`
-    if (process.env.NODE_ENV !== 'production')
-      console.log('Analytics event:', event, props, url)
     plausible(event, { props, u: url })
   }
 

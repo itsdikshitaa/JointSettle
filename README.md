@@ -27,7 +27,11 @@ The live application is deployed at: **https://jointsettle.vercel.app**
 - **AI-Powered Receipt Scanning** — Upload a photo of a receipt; AI extracts the title, amount, date, and category (requires OpenAI API key).
 - **AI Category Extraction** — When typing an expense title, AI suggests the most relevant category (requires OpenAI API key).
 - **Expense Documents / Receipts** — Attach images to expenses via S3-compatible storage.
-- **CSV Export & Import** — Export expenses as CSV or JSON. Import expenses from a CSV file (supports the app's export format and flexible column naming).
+- **CSV Export & Import** — Export expenses as CSV or JSON. Import expenses from a CSV file with **dual-mode auto-detection** — supports both the app's export format AND the assignment CSV format (`date,description,paid_by,amount,currency,split_type,split_with,split_details,notes`). Auto-detects 24 anomaly types with structured reporting.
+- **Import Reports** — Each CSV import generates a persistent report with full anomaly details. View at `/groups/[groupId]/imports/[importId]` or download as JSON.
+- **Anomaly Detection** — 24 anomaly scenarios detected and classified by severity (`error`/`warning`/`info`) and action (`skipped`/`auto-fixed`/`flagged`). Includes duplicate detection, date ambiguity handling, thousand-separator stripping, settlement detection from notes, and time-based membership validation.
+- **Balance Drill-Down** — Click any balance card to see which expenses contribute to it, sorted by date, with per-expense contribution amounts.
+- **Member Timeline** — View a visual timeline in the Information tab showing when each member joined and left the group.
 - **Stats Dashboard** — Visual charts (pie, bar) showing spending by category and participant. Per-person totals and shares.
 - **Balances Overview** — At-a-glance summary of who owes what, with visual progress bars.
 - **PWA Support** — Install JointSettle as a Progressive Web App on mobile or desktop.
@@ -124,9 +128,8 @@ npm install
 Create a `.env` file in the project root:
 
 ```env
-# Database
+# Database (PostgreSQL)
 DATABASE_URL="postgresql://user:password@localhost:5432/jointsettle"
-POSTGRES_PRISMA_URL="postgresql://user:password@localhost:5432/jointsettle"
 POSTGRES_URL_NON_POOLING="postgresql://user:password@localhost:5432/jointsettle"
 
 # App

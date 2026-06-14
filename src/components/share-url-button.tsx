@@ -21,8 +21,6 @@ export function ShareUrlButton({ url, text }: Props) {
       onClick={() => {
         if (navigator.share) {
           navigator.share({ text, url })
-        } else {
-          console.log('Sharing is not available', { text, url })
         }
       }}
     >

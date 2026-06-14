@@ -112,15 +112,12 @@ function ReceiptDialogContent() {
       sendEvent({ event: 'expense: scan receipt', props: { groupId } })
       try {
         setPending(true)
-        console.log('Uploading image…')
         let { url } = await uploadToS3(file)
-        console.log('Extracting information from receipt…')
         const { amount, categoryId, date, title } =
           await extractExpenseInformationFromImage(url)
         const { width, height } = await getImageData(file)
         setReceiptInfo({ amount, categoryId, date, title, url, width, height })
       } catch (err) {
-        console.error(err)
         toast({
           title: t('ErrorToast.title'),
           description: t('ErrorToast.description'),

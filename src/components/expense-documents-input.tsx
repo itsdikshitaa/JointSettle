@@ -67,7 +67,6 @@ export function ExpenseDocumentsInput({
         updateDocuments([...documents, { id: randomId(), url, width, height }])
         onDocumentAttached?.()
       } catch (err) {
-        console.error(err)
         toast({
           title: t('ErrorToast.title'),
           description: t('ErrorToast.description'),

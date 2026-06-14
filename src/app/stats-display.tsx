@@ -18,7 +18,7 @@ export function StatsDisplay() {
     if (isLoggedIn && hash) {
       getUserStatsAction(hash).then((s) => {
         if (s) setStats(s)
-      }).catch(console.error)
+      }).catch(() => {})
     } else {
       setStats(null)
     }
