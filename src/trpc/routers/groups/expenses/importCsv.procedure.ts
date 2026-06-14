@@ -760,6 +760,30 @@ export const importCsvExpensesProcedure = baseProcedure
         )
       }
 
-      return result
+      // Persist the full import result in ImportLog (including anomaly details)
+      const importId = randomId()
+      await prisma.importLog.create({
+        data: {
+          id: importId,
+          groupId,
+          fileName: 'imported.csv',
+          totalRows: result.summary.totalRows,
+          imported: result.summary.imported,
+          skipped: result.summary.skipped,
+          autoFixed: result.summary.autoFixed,
+          warnings: result.summary.warnings,
+          errors: result.summary.errors,
+          anomalyCount: result.anomalies.length,
+          data: JSON.stringify({
+            anomalies: result.anomalies,
+            format,
+          }),
+        },
+      })
+
+      return {
+        ...result,
+        importId,
+      }
     },
   )

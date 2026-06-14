@@ -138,6 +138,23 @@ model Activity {
   data          String?
 }
 
+model ImportLog {
+  id           String   @id
+  groupId      String
+  fileName     String
+  totalRows    Int
+  imported     Int
+  skipped      Int
+  autoFixed    Int
+  warnings     Int
+  errors       Int
+  anomalyCount Int      @default(0)
+  data         String?  @db.Text   // JSON-serialized full anomaly details + format info
+  createdAt    DateTime @default(now())
+
+  @@index([groupId])
+}
+
 enum ActivityType {
   UPDATE_GROUP
   CREATE_EXPENSE

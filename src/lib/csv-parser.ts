@@ -22,6 +22,7 @@ export interface Anomaly {
 export interface ImportResult {
   success: number
   anomalies: Anomaly[]
+  importId?: string
   summary: {
     totalRows: number
     imported: number

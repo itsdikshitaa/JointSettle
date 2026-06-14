@@ -431,6 +431,7 @@
       "imported": "{count} expense(s) imported successfully.",
       "summary": "{total} rows: {imported} imported, {skipped} skipped, {autoFixed} auto-fixed, {warnings} warnings, {errors} errors",
       "details": "Anomaly details:",
+      "viewFullReport": "View Full Report",
       "importMore": "Import another file"
     },
     "anomaly": {

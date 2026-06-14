@@ -22,6 +22,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { useMediaQuery } from '@/lib/hooks'
 import type { ImportResult, AmbiguousDateInfo } from '@/lib/csv-parser'
+import Link from 'next/link'
 import { trpc } from '@/trpc/client'
 import {
   Download,
@@ -277,6 +278,15 @@ export function ImportCsvButton() {
               </div>
             )}
           </div>
+          {/* View Full Report button */}
+          {result.importId && (
+            <Button variant="secondary" className="w-full gap-2" asChild>
+              <Link href={`/groups/${groupId}/imports/${result.importId}`}>
+                <FileText className="w-4 h-4" />
+                {t('result.viewFullReport')}
+              </Link>
+            </Button>
+          )}
           <Button variant="outline" onClick={handleReset} className="w-full">
             {t('result.importMore')}
           </Button>
