@@ -52,12 +52,17 @@
     "no": "No",
     "ok": "OK"
   },
+  "Updates": {
+    "title": "Latest Updates",
+    "subtitle": "What's new in JointSettle — features, improvements, and fixes."
+  },
   "locale": {
     "switch": "Switch language",
     "current": "Current language"
   },
   "Header": {
-    "groups": "Groups"
+    "groups": "Groups",
+    "latestUpdates": "Latest Updates"
   },
   "Footer": {
     "madeIn": "Made with ❤️ for everyone to use.",
