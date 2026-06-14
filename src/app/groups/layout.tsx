@@ -1,0 +1,19 @@
+import {
+  FeedbackButton,
+  FeedbackModal,
+} from '@/components/feedback-button/feedback-button'
+import { env } from '@/lib/env'
+import { PropsWithChildren, Suspense } from 'react'
+
+export default function GroupsLayout({ children }: PropsWithChildren<{}>) {
+  return (
+    <Suspense>
+      <main className="flex-1 max-w-screen-lg w-full mx-auto px-4 py-6 flex flex-col gap-6">
+        {children}
+      </main>
+      <FeedbackModal donationUrl={env.STRIPE_DONATION_LINK}>
+        <FeedbackButton />
+      </FeedbackModal>
+    </Suspense>
+  )
+}

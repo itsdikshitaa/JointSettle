@@ -1,0 +1,563 @@
+{
+  "nav": {
+    "groups": "Groups",
+    "createGroup": "Create group",
+    "recentGroups": "Recent groups"
+  },
+  "groups": {
+    "title": "Groups",
+    "create": "Create group",
+    "name": "Name",
+    "currency": "Currency",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "share": "Share",
+    "export": "Export",
+    "expenses": "Expenses",
+    "balances": "Balances",
+    "activity": "Activity",
+    "stats": "Stats",
+    "information": "Information",
+    "notFound": "Group not found"
+  },
+  "expenses": {
+    "title": "Expenses",
+    "create": "Add expense",
+    "edit": "Edit expense",
+    "title_": "Title",
+    "amount": "Amount",
+    "category": "Category",
+    "paidBy": "Paid by",
+    "paidFor": "Paid for",
+    "date": "Date",
+    "notes": "Notes",
+    "documents": "Documents",
+    "save": "Save",
+    "delete": "Delete",
+    "export": "Export"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK"
+  },
+  "locale": {
+    "switch": "Switch language",
+    "current": "Current language"
+  },
+  "Header": {
+    "groups": "Groups"
+  },
+  "Footer": {
+    "madeIn": "Made with ❤️ for everyone to use.",
+    "builtBy": "Built by <author>people</author> with help from amazing <source>contributors</source>."
+  },
+  "Support": {
+    "buttonLabel": "Support us"
+  },
+  "Homepage": {
+    "title": "Split expenses, <strong>not friendships</strong>"
+  },
+  "Groups": {
+    "create": "Create group",
+    "AddByURL": {
+      "button": "Add by URL",
+      "title": "Add existing group",
+      "description": "Enter a group URL shared by a friend to join.",
+      "error": "Group not found. Check the URL and try again."
+    },
+    "NotFound": {
+      "text": "Group not found",
+      "link": "Back to groups"
+    },
+    "myGroups": "My Groups",
+    "loadingRecent": "Loading recently visited groups...",
+    "NoRecent": {
+      "description": "No recently visited groups found. Create one or ask someone to share their group link with you.",
+      "create": "Create a group",
+      "orAsk": "or ask someone for their group link."
+    },
+    "starred": "Starred",
+    "recent": "Recent",
+    "archived": "Archived",
+    "removeRecent": "Remove from recent",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "RecentRemovedToast": {
+      "title": "Removed",
+      "description": "Group removed from recent list."
+    }
+  },
+  "Expenses": {
+    "title": "Expenses",
+    "description": "All expenses in this group",
+    "create": "Add expense",
+    "export": "Export",
+    "ActiveUserModal": {
+      "title": "Select your name",
+      "description": "Select your name so we can show you your personal balance.",
+      "footer": "You can change this later in the group settings.",
+      "nobody": "Just looking",
+      "save": "Save"
+    },
+    "exportJson": "Export as JSON",
+    "exportCsv": "Export as CSV",
+    "noExpenses": "No expenses yet.",
+    "createFirst": "Add your first expense",
+    "searchPlaceholder": "Search expenses...",
+    "Groups": {
+      "upcoming": "Upcoming",
+      "thisWeek": "This week",
+      "earlierThisMonth": "Earlier this month",
+      "lastMonth": "Last month",
+      "earlierThisYear": "Earlier this year",
+      "lastYear": "Last year",
+      "older": "Older"
+    }
+  },
+  "Balances": {
+    "title": "Balances",
+    "description": "Who owes what",
+    "Reimbursements": {
+      "title": "Reimbursements",
+      "description": "Suggested payments to settle up",
+      "noReimbursements": "All settled up! 🎉",
+      "markAsPaid": "Mark as paid"
+    }
+  },
+  "Activity": {
+    "title": "Activity",
+    "description": "Recent changes to this group",
+    "someone": "Someone",
+    "settingsModified": "{participant} modified group settings",
+    "expenseCreated": "{participant} added expense <em>{expense}</em>",
+    "expenseUpdated": "{participant} updated expense <em>{expense}</em>",
+    "expenseDeleted": "{participant} deleted expense <em>{expense}</em>",
+    "noActivity": "No activity yet. Start by adding an expense!",
+    "Groups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "earlierThisWeek": "Earlier this week",
+      "lastWeek": "Last week",
+      "earlierThisMonth": "Earlier this month",
+      "lastMonth": "Last month",
+      "earlierThisYear": "Earlier this year",
+      "lastYear": "Last year",
+      "older": "Older"
+    }
+  },
+  "Stats": {
+    "title": "Stats",
+    "Totals": {
+      "title": "Totals",
+      "description": "Summary of all group expenses",
+      "yourShare": "Your share",
+      "groupSpendings": "Total spending",
+      "groupEarnings": "Total earnings",
+      "yourSpendings": "Your spending",
+      "yourEarnings": "Your earnings"
+    }
+  },
+  "Information": {
+    "title": "Information",
+    "description": "Group description and details",
+    "empty": "No information provided."
+  },
+  "Settings": {
+    "title": "Settings"
+  },
+  "Share": {
+    "title": "Share this group",
+    "description": "Share this link with your friends so they can join this group:",
+    "warning": "Warning:",
+    "warningHelp": "Anyone with this link can view and edit this group."
+  },
+  "GroupForm": {
+    "title": "Group Details",
+    "NameField": {
+      "label": "Group name",
+      "placeholder": "Trip to Paris, Roommates, ...",
+      "description": "Give your group a descriptive name."
+    },
+    "CurrencyCodeField": {
+      "label": "Currency",
+      "customOption": "Custom",
+      "editDescription": "Changing the currency will not convert existing expenses.",
+      "createDescription": "Select the currency used by most participants."
+    },
+    "CurrencyField": {
+      "label": "Currency symbol",
+      "placeholder": "$",
+      "description": "Enter your currency symbol if not listed above."
+    },
+    "InformationField": {
+      "label": "Description (optional)",
+      "placeholder": "Add some context about this group..."
+    },
+    "Participants": {
+      "title": "Participants",
+      "description": "Add the people who will be splitting expenses.",
+      "John": "Alice",
+      "Jane": "Bob",
+      "Jack": "Charlie",
+      "new": "New participant",
+      "protectedParticipant": "This participant has expenses and cannot be removed.",
+      "add": "Add participant"
+    },
+    "Settings": {
+      "title": "Your Profile",
+      "description": "Identify yourself in this group.",
+      "ActiveUserField": {
+        "label": "Your name",
+        "placeholder": "Select your name...",
+        "none": "Just looking",
+        "description": "Select your name to mark your expenses."
+      },
+      "saving": "Saving...",
+      "creating": "Creating...",
+      "save": "Save changes",
+      "create": "Create group",
+      "cancel": "Cancel"
+    }
+  },
+  "ExpenseForm": {
+    "DeletePopup": {
+      "label": "Delete",
+      "title": "Delete expense",
+      "description": "Are you sure you want to delete this expense? This action cannot be undone.",
+      "yes": "Yes, delete",
+      "cancel": "Cancel"
+    },
+    "Expense": {
+      "create": "Add Expense",
+      "edit": "Edit Expense",
+      "TitleField": {
+        "label": "Title",
+        "placeholder": "Dinner, Groceries, ...",
+        "description": "Give your expense a short title."
+      },
+      "DateField": {
+        "label": "Date",
+        "description": "When was this expense made?"
+      },
+      "currencyField": {
+        "label": "Currency",
+        "description": "The original currency of this expense."
+      },
+      "categoryFieldDescription": "Classify your expense.",
+      "paidByField": {
+        "label": "Paid by",
+        "placeholder": "Select who paid...",
+        "description": "Who made the payment?"
+      },
+      "paidFor": {
+        "title": "Split with",
+        "description": "Select who this expense is for."
+      },
+      "recurrenceRule": {
+        "label": "Recurrence",
+        "none": "None (one-time)",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "description": "Set this expense to repeat."
+      },
+      "attachDescription": "Attach receipts or images to this expense."
+    },
+    "Income": {
+      "create": "Add Income",
+      "edit": "Edit Income",
+      "TitleField": {
+        "label": "Title",
+        "placeholder": "Salary, Refund, ...",
+        "description": "Give your income a short title."
+      },
+      "DateField": {
+        "label": "Date",
+        "description": "When was this income received?"
+      },
+      "currencyField": {
+        "label": "Currency",
+        "description": "The original currency of this income."
+      },
+      "categoryFieldDescription": "Classify your income.",
+      "paidByField": {
+        "label": "Received by",
+        "placeholder": "Select who received...",
+        "description": "Who received the payment?"
+      },
+      "paidFor": {
+        "title": "Share with",
+        "description": "Select who this income is shared with."
+      },
+      "recurrenceRule": {
+        "label": "Recurrence",
+        "none": "None (one-time)",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "description": "Set this income to repeat."
+      },
+      "attachDescription": "Attach receipts or images to this income."
+    },
+    "reimbursement": "Reimbursement",
+    "categoryField": {
+      "label": "Category"
+    },
+    "amountField": {
+      "label": "Amount"
+    },
+    "originalAmountField": {
+      "label": "Original amount"
+    },
+    "conversionRateField": {
+      "label": "Exchange rate",
+      "useApi": "Use live exchange rate",
+      "useCustom": "Set custom exchange rate"
+    },
+    "conversionRateState": {
+      "loading": "Fetching exchange rate...",
+      "success": "1 =",
+      "error": "Could not fetch exchange rate.",
+      "staleRate": "Using cached rate:",
+      "noRate": "No exchange rate available.",
+      "dateMismatch": "Exchange rate not available for {date}.",
+      "currencyNotFound": "No exchange rate available for this currency.",
+      "noDate": "Select a date to fetch exchange rate.",
+      "customRate": "Using custom exchange rate.",
+      "refresh": "Refresh"
+    },
+    "conversionUnavailable": "No currency code set for this group.",
+    "isReimbursementField": {
+      "label": "This is a reimbursement"
+    },
+    "notesField": {
+      "label": "Notes (optional)"
+    },
+    "paidFor": {
+      "title": "Split with"
+    },
+    "selectNone": "Select none",
+    "selectAll": "Select all",
+    "shares": "shares",
+    "advancedOptions": "Advanced options",
+    "SplitModeField": {
+      "label": "Split mode",
+      "saveAsDefault": "Save as default splitting options"
+    },
+    "attachDocuments": "Attachments",
+    "creating": "Creating expense...",
+    "saving": "Saving expense...",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "ExpenseCard": {
+    "paidBy": "{paidBy} paid <strong>{paidFor}</strong>",
+    "receivedBy": "{paidBy} received for <strong>{paidFor}</strong>",
+    "everyone": "everyone",
+    "notInvolved": "You're not involved in this expense.",
+    "yourBalance": "Your balance:"
+  },
+  "ExpenseDocumentsInput": {
+    "TooBigToast": {
+      "title": "File too large",
+      "description": "Maximum file size is {maxSize}. Your file is {size}."
+    },
+    "ErrorToast": {
+      "title": "Upload failed",
+      "description": "An error occurred while uploading the file.",
+      "retry": "Retry"
+    }
+  },
+  "CreateFromReceipt": {
+    "Dialog": {
+      "triggerTitle": "Scan receipt",
+      "title": "Scan Receipt",
+      "description": "Upload a receipt and we'll extract the expense information for you.",
+      "body": "Upload a clear photo of your receipt.",
+      "selectImage": "Tap to select\nreceipt image",
+      "titleLabel": "Title",
+      "categoryLabel": "Category",
+      "amountLabel": "Amount",
+      "dateLabel": "Date",
+      "continue": "Continue to expense form",
+      "editNext": "You can edit the information in the next step."
+    },
+    "unknown": "Unknown",
+    "TooBigToast": {
+      "title": "File too large",
+      "description": "Maximum file size is {maxSize}. Your file is {size}."
+    },
+    "ErrorToast": {
+      "title": "Scan failed",
+      "description": "Could not extract information from the receipt.",
+      "retry": "Retry"
+    }
+  },
+  "Categories": {
+    "search": "Search categories...",
+    "noCategory": "No category found.",
+    "Housing": {
+      "heading": "Housing",
+      "Rent": "Rent",
+      "Mortgage": "Mortgage",
+      "Utilities": "Utilities",
+      "Internet": "Internet",
+      "Phone": "Phone",
+      "Maintenance": "Maintenance",
+      "Insurance": "Insurance",
+      "Property Tax": "Property Tax",
+      "Home Supplies": "Home Supplies",
+      "Furniture": "Furniture",
+      "Electronics": "Electronics",
+      "Appliances": "Appliances",
+      "Cleaning": "Cleaning",
+      "Other": "Other"
+    },
+    "Transportation": {
+      "heading": "Transportation",
+      "Fuel": "Fuel",
+      "Public Transit": "Public Transit",
+      "Taxi": "Taxi",
+      "Ride Share": "Ride Share",
+      "Parking": "Parking",
+      "Tolls": "Tolls",
+      "Vehicle Maintenance": "Vehicle Maintenance",
+      "Vehicle Insurance": "Vehicle Insurance",
+      "Vehicle Registration": "Vehicle Registration",
+      "Rental": "Rental",
+      "Flights": "Flights",
+      "Train": "Train",
+      "Bus": "Bus",
+      "Other": "Other"
+    },
+    "Food & Dining": {
+      "heading": "Food & Dining",
+      "Groceries": "Groceries",
+      "Restaurant": "Restaurant",
+      "Takeaway": "Takeaway",
+      "Delivery": "Delivery",
+      "Coffee": "Coffee",
+      "Snacks": "Snacks",
+      "Drinks": "Drinks",
+      "Alcohol": "Alcohol",
+      "Other": "Other"
+    },
+    "Shopping": {
+      "heading": "Shopping",
+      "Clothing": "Clothing",
+      "Shoes": "Shoes",
+      "Accessories": "Accessories",
+      "Personal Care": "Personal Care",
+      "Beauty": "Beauty",
+      "Health": "Health",
+      "Pharmacy": "Pharmacy",
+      "Gifts": "Gifts",
+      "Books": "Books",
+      "Stationery": "Stationery",
+      "Sports": "Sports",
+      "Hobbies": "Hobbies",
+      "Toys": "Toys",
+      "Pets": "Pets",
+      "Baby": "Baby",
+      "Other": "Other"
+    },
+    "Entertainment": {
+      "heading": "Entertainment",
+      "Movies": "Movies",
+      "Concerts": "Concerts",
+      "Theatre": "Theatre",
+      "Museums": "Museums",
+      "Amusement Parks": "Amusement Parks",
+      "Sports Events": "Sports Events",
+      "Streaming": "Streaming",
+      "Music": "Music",
+      "Games": "Games",
+      "Other": "Other"
+    },
+    "Travel": {
+      "heading": "Travel",
+      "Hotel": "Hotel",
+      "Hostel": "Hostel",
+      "Airbnb": "Airbnb",
+      "Activities": "Activities",
+      "Tours": "Tours",
+      "Sightseeing": "Sightseeing",
+      "Travel Insurance": "Travel Insurance",
+      "Visa": "Visa",
+      "Luggage": "Luggage",
+      "Other": "Other"
+    },
+    "Healthcare": {
+      "heading": "Healthcare",
+      "Doctor": "Doctor",
+      "Dentist": "Dentist",
+      "Hospital": "Hospital",
+      "Pharmacy": "Pharmacy",
+      "Optician": "Optician",
+      "Therapy": "Therapy",
+      "Health Insurance": "Health Insurance",
+      "Other": "Other"
+    },
+    "Education": {
+      "heading": "Education",
+      "Tuition": "Tuition",
+      "Books": "Books",
+      "Supplies": "Supplies",
+      "Courses": "Courses",
+      "Workshops": "Workshops",
+      "Certifications": "Certifications",
+      "Other": "Other"
+    },
+    "General": {
+      "heading": "General",
+      "General": "General",
+      "Other": "Other"
+    },
+    "Income": {
+      "heading": "Income",
+      "Salary": "Salary",
+      "Freelance": "Freelance",
+      "Refund": "Refund",
+      "Gift": "Gift",
+      "Investment": "Investment",
+      "Other": "Other"
+    },
+    "Payment": {
+      "heading": "Payment",
+      "Payment": "Payment",
+      "Other": "Other"
+    },
+    "Donation": {
+      "heading": "Donation",
+      "Donation": "Donation",
+      "Charity": "Charity",
+      "Other": "Other"
+    }
+  },
+  "Currencies": {
+    "search": "Search currencies...",
+    "noCurrency": "No currency found.",
+    "common": {
+      "heading": "Common currencies"
+    },
+    "other": {
+      "heading": "Other currencies"
+    },
+    "custom": {
+      "heading": "Custom"
+    }
+  }
+}

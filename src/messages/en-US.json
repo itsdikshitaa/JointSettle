@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "groups": "Groups",
+    "createGroup": "Create group",
+    "recentGroups": "Recent groups"
+  },
+  "groups": {
+    "title": "Groups",
+    "create": "Create group",
+    "name": "Name",
+    "currency": "Currency",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "share": "Share",
+    "export": "Export",
+    "expenses": "Expenses",
+    "balances": "Balances",
+    "activity": "Activity",
+    "stats": "Stats",
+    "information": "Information",
+    "notFound": "Group not found"
+  },
+  "expenses": {
+    "title": "Expenses",
+    "create": "Add expense",
+    "edit": "Edit expense",
+    "title_": "Title",
+    "amount": "Amount",
+    "category": "Category",
+    "paidBy": "Paid by",
+    "paidFor": "Paid for",
+    "date": "Date",
+    "notes": "Notes",
+    "documents": "Documents",
+    "save": "Save",
+    "delete": "Delete",
+    "export": "Export"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK"
+  },
+  "locale": {
+    "switch": "Switch language",
+    "current": "Current language"
+  }
+}
