@@ -2,6 +2,7 @@
   <img src="https://img.shields.io/badge/status-active-brightgreen" alt="Status" />
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
   <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome" />
+  <img src="https://img.shields.io/github/stars/itsdikshitaa/JointSettle?style=social" alt="Stars" />
 </div>
 
 <br />
@@ -9,7 +10,7 @@
 <div align="center">
   <h1>🤝 JointSettle</h1>
   <p><strong>Split expenses, not friendships.</strong></p>
-  <p>A minimalist, privacy-first web app for sharing expenses with friends and family — no ads, no account, no problem.</p>
+  <p>Minimalist, privacy-first expense sharing for friends and family — no ads, no account required.</p>
 </div>
 
 <div align="center">
@@ -23,6 +24,18 @@
 <br />
 
 ---
+
+## 📖 About
+
+**JointSettle** is a modern, open-source web application for effortlessly splitting expenses with friends, family, roommates, or travel companions. No sign-up required — just create a group, add expenses, and let JointSettle figure out who owes what.
+
+Unlike traditional expense-splitting apps, JointSettle is:
+- **Fully anonymous** — no accounts, no passwords, no personal data stored
+- **Ad-free** — no distractions, no tracking
+- **Open source** — transparent, auditable, community-driven
+- **Self-hostable** — deploy your own instance with Docker
+
+Built for groups of any size, JointSettle handles everything from simple dinner splits to complex multi-currency trip expenses with different split modes.
 
 ## ✨ Features
 
