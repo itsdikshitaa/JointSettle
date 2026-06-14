@@ -21,8 +21,18 @@ import {
 } from '@/components/ui/drawer'
 import { useToast } from '@/components/ui/use-toast'
 import { useMediaQuery } from '@/lib/hooks'
+import type { ImportResult, AmbiguousDateInfo } from '@/lib/csv-parser'
 import { trpc } from '@/trpc/client'
-import { Download, Loader2, Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react'
+import {
+  Download,
+  Loader2,
+  Upload,
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  AlertTriangle,
+  Info,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState, useRef } from 'react'
 import { useCurrentGroup } from '../current-group-context'
@@ -36,7 +46,9 @@ export function ImportCsvButton() {
   const [open, setOpen] = useState(false)
   const [csvContent, setCsvContent] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string>('')
-  const [result, setResult] = useState<{ success: number; errors: string[] } | null>(null)
+  const [result, setResult] = useState<ImportResult | null>(null)
+  const [ambiguousDates, setAmbiguousDates] = useState<AmbiguousDateInfo[] | null>(null)
+  const [dateFormatPreference, setDateFormatPreference] = useState<'dd/mm' | 'mm/dd' | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
   const utils = trpc.useUtils()
@@ -49,6 +61,8 @@ export function ImportCsvButton() {
 
     setFileName(file.name)
     setResult(null)
+    setAmbiguousDates(null)
+    setDateFormatPreference(null)
 
     const reader = new FileReader()
     reader.onload = (event) => {
@@ -57,22 +71,31 @@ export function ImportCsvButton() {
     reader.readAsText(file)
   }
 
-  const handleImport = async () => {
+  const handleImport = async (dateFormat?: 'dd/mm' | 'mm/dd') => {
     if (!csvContent) return
 
     try {
-      const res = await importCsv({
+      const res: any = await importCsv({
         groupId,
         hash: hash!,
         csvContent,
+        preferredDateFormat: dateFormat,
       })
-      setResult(res)
-      if (res.success > 0) {
+
+      // Check if the response requires date format resolution
+      if (res.requiresDateFormat && res.ambiguousDates) {
+        setAmbiguousDates(res.ambiguousDates)
+        return
+      }
+
+      const typedResult = res as ImportResult
+      setResult(typedResult)
+      if (typedResult.success > 0) {
         await utils.groups.expenses.invalidate()
         await utils.groups.balances.invalidate()
         await utils.groups.stats.invalidate()
         toast({
-          description: t('toastSuccess', { count: res.success }),
+          description: t('toastSuccess', { count: typedResult.success }),
         })
       }
     } catch (err: any) {
@@ -87,13 +110,33 @@ export function ImportCsvButton() {
     setCsvContent(null)
     setFileName('')
     setResult(null)
+    setAmbiguousDates(null)
+    setDateFormatPreference(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
 
+  const severityIcon = (severity: string) => {
+    switch (severity) {
+      case 'error':
+        return <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+      case 'warning':
+        return <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+      case 'info':
+        return <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+      default:
+        return <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+    }
+  }
+
   const trigger = (
-    <Button variant="outline" size="sm" title={t('button')} className="border-blue-200/30 dark:border-blue-800/20 hover:bg-blue-50/30 dark:hover:bg-blue-950/20">
+    <Button
+      variant="outline"
+      size="sm"
+      title={t('button')}
+      className="border-blue-200/30 dark:border-blue-800/20 hover:bg-blue-50/30 dark:hover:bg-blue-950/20"
+    >
       <Upload className="w-4 h-4 mr-1.5" />
       {t('button')}
     </Button>
@@ -103,6 +146,7 @@ export function ImportCsvButton() {
     <div className="space-y-4">
       {!csvContent ? (
         <>
+          {/* File Drop Zone */}
           <div
             className="border-2 border-dashed border-blue-200/40 dark:border-blue-800/30 rounded-xl p-8 text-center cursor-pointer hover:border-blue-400/50 dark:hover:border-blue-600/50 transition-colors duration-200 bg-white/30 dark:bg-white/[0.02]"
             onClick={() => fileInputRef.current?.click()}
@@ -119,38 +163,117 @@ export function ImportCsvButton() {
             />
           </div>
 
+          {/* Format Info */}
           <div className="rounded-lg bg-blue-50/50 dark:bg-blue-950/20 p-3 text-xs text-muted-foreground space-y-1">
             <p className="font-medium text-foreground flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-blue-500" />
               {t('format.title')}
             </p>
-            <p>{t('format.line1')}</p>
-            <p>{t('format.line2')}</p>
+            <p>{t('format.assignmentLine1')}</p>
+            <p>{t('format.assignmentLine2')}</p>
             <p>{t('format.line3')}</p>
+          </div>
+        </>
+      ) : ambiguousDates ? (
+        <>
+          {/* Date Format Picker */}
+          <div className="space-y-4">
+            <div className="rounded-xl border border-amber-200/30 dark:border-amber-800/30 bg-amber-50/50 dark:bg-amber-950/20 p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm text-amber-700 dark:text-amber-400 mb-1">
+                    {t('ambiguousDate.title')}
+                  </p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {t('ambiguousDate.description')}
+                  </p>
+                  {ambiguousDates.slice(0, 3).map((ad, i) => (
+                    <p key={i} className="text-xs text-muted-foreground font-mono">
+                      {ad.originalValue} — {ad.ddmmResult} vs {ad.mmddResult}
+                    </p>
+                  ))}
+                  {ambiguousDates.length > 3 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      ...and {ambiguousDates.length - 3} more
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                onClick={() => handleImport('dd/mm')}
+                disabled={isPending}
+                className="w-full justify-start"
+              >
+                {t('ambiguousDate.ddmm')}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleImport('mm/dd')}
+                disabled={isPending}
+                className="w-full justify-start"
+              >
+                {t('ambiguousDate.mmdd')}
+              </Button>
+            </div>
+
+            <Button variant="ghost" onClick={handleReset} className="w-full text-xs">
+              {t('changeFile')}
+            </Button>
           </div>
         </>
       ) : result ? (
         <>
+          {/* Results */}
           <div className="space-y-3">
+            {/* Summary */}
             <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/30 dark:border-emerald-800/30">
               <CheckCircle className="w-8 h-8 text-emerald-500 shrink-0" />
               <div>
                 <p className="font-medium text-sm text-emerald-700 dark:text-emerald-400">
                   {t('result.imported', { count: result.success })}
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  {t('result.summary', {
+                    total: result.summary.totalRows,
+                    skipped: result.summary.skipped,
+                    autoFixed: result.summary.autoFixed,
+                    warnings: result.summary.warnings,
+                    errors: result.summary.errors,
+                  })}
+                </p>
               </div>
             </div>
-            {result.errors.length > 0 && (
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-red-600 dark:text-red-400 flex items-center gap-1.5">
-                  <AlertCircle className="w-4 h-4" />
-                  {t('result.errors', { count: result.errors.length })}
+
+            {/* Anomalies by severity */}
+            {result.anomalies.length > 0 && (
+              <div className="max-h-48 overflow-y-auto space-y-1.5">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t('result.details')}
                 </p>
-                <div className="max-h-32 overflow-y-auto text-xs text-muted-foreground space-y-0.5">
-                  {result.errors.map((err, i) => (
-                    <p key={i}>{err}</p>
-                  ))}
-                </div>
+                {result.anomalies.map((anomaly, i) => (
+                  <div
+                    key={i}
+                    className="flex items-start gap-2 p-2 rounded-lg bg-white/50 dark:bg-white/[0.02] text-xs"
+                  >
+                    {severityIcon(anomaly.severity)}
+                    <div className="min-w-0">
+                      <p className="font-medium">
+                        [{t(`anomaly.severity_${anomaly.severity}`)}] {t(`anomaly.${anomaly.type}`)}
+                      </p>
+                      <p className="text-muted-foreground">{anomaly.description}</p>
+                      {anomaly.fix && (
+                        <p className="text-blue-600 dark:text-blue-400 mt-0.5">
+                          → {anomaly.fix}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -160,6 +283,7 @@ export function ImportCsvButton() {
         </>
       ) : (
         <>
+          {/* Ready to Import */}
           <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50/50 dark:bg-blue-950/20">
             <FileText className="w-8 h-8 text-blue-500 shrink-0" />
             <div className="min-w-0">
@@ -168,19 +292,28 @@ export function ImportCsvButton() {
                 {csvContent ? `${csvContent.split('\n').length} rows` : ''}
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleReset} className="shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReset}
+              className="shrink-0"
+            >
               {t('changeFile')}
             </Button>
           </div>
           <Button
-            onClick={handleImport}
+            onClick={() => handleImport()}
             disabled={isPending}
             className="w-full bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500"
           >
             {isPending ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('importing')}</>
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('importing')}
+              </>
             ) : (
-              <><Upload className="w-4 h-4 mr-2" /> {t('import')}</>
+              <>
+                <Upload className="w-4 h-4 mr-2" /> {t('import')}
+              </>
             )}
           </Button>
         </>
@@ -190,12 +323,21 @@ export function ImportCsvButton() {
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={(newOpen) => {
-        if (!newOpen) handleReset()
-        setOpen(newOpen)
-      }}>
+      <Dialog
+        open={open}
+        onOpenChange={(newOpen) => {
+          if (!newOpen) handleReset()
+          setOpen(newOpen)
+        }}
+      >
         <DialogTrigger asChild>{trigger}</DialogTrigger>
-        <DialogContent className="sm:max-w-[500px] animate-scale-in">
+        <DialogContent
+          className={
+            result && result.anomalies.length > 0
+              ? 'sm:max-w-[550px] animate-scale-in'
+              : 'sm:max-w-[500px] animate-scale-in'
+          }
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Download className="w-5 h-5 text-blue-500" />
@@ -210,10 +352,13 @@ export function ImportCsvButton() {
   }
 
   return (
-    <Drawer open={open} onOpenChange={(newOpen) => {
-      if (!newOpen) handleReset()
-      setOpen(newOpen)
-    }}>
+    <Drawer
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (!newOpen) handleReset()
+        setOpen(newOpen)
+      }}
+    >
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">

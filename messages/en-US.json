@@ -408,23 +408,59 @@
     "description": "Upload a CSV file from the JointSettle CSV export or a compatible format.",
     "dropzone": {
       "title": "Drop CSV file here or click to browse",
-      "description": "Supports the JointSettle CSV export format and other common expense formats."
+      "description": "Supports the JointSettle CSV export format and the assignment CSV format."
     },
     "format": {
-      "title": "Accepted CSV format",
-      "line1": "Supports the JointSettle export format with columns: Date, Description, Category, Cost",
-      "line2": "Participant columns (names) after split mode will be used for expense splitting.",
-      "line3": "Flexible column naming: Date/date, Description/title, Cost/amount, etc."
+      "title": "Accepted CSV formats",
+      "assignmentLine1": "Assignment CSV: date, description, paid_by, amount, currency, split_type, split_with, split_details, notes",
+      "assignmentLine2": "Supports equal, unequal, percentage, and share split types with semicolon-separated participants",
+      "line3": "Auto-detects which format you're using — no configuration needed."
     },
     "changeFile": "Change file",
     "import": "Import expenses",
     "importing": "Importing expenses...",
     "toastSuccess": "{count} expense(s) imported successfully!",
     "toastError": "Failed to import CSV",
+    "ambiguousDate": {
+      "title": "Ambiguous dates detected",
+      "description": "Some dates could not be uniquely parsed. Which format does your CSV use?",
+      "ddmm": "DD/MM/YYYY (Day first)",
+      "mmdd": "MM/DD/YYYY (Month first)"
+    },
     "result": {
       "imported": "{count} expense(s) imported successfully.",
-      "errors": "{count} error(s) found:",
+      "summary": "{total} rows: {imported} imported, {skipped} skipped, {autoFixed} auto-fixed, {warnings} warnings, {errors} errors",
+      "details": "Anomaly details:",
       "importMore": "Import another file"
+    },
+    "anomaly": {
+      "DUPLICATE_EXPENSE": "Duplicate expense",
+      "DATE_FORMAT_INCONSISTENT": "Inconsistent date format",
+      "DATE_AMBIGUOUS": "Ambiguous date format",
+      "DATE_MISSING": "Missing date",
+      "DATE_UNPARSEABLE": "Unparseable date",
+      "TITLE_MISSING": "Missing description",
+      "AMOUNT_MISSING": "Missing amount",
+      "AMOUNT_INVALID": "Invalid amount",
+      "AMOUNT_COMMAS": "Thousands separator",
+      "AMOUNT_EXTRA_PRECISION": "Excessive precision",
+      "AMOUNT_NEGATIVE": "Negative amount (refund)",
+      "AMOUNT_ZERO": "Zero amount",
+      "CURRENCY_MISSING": "Missing currency",
+      "PAID_BY_MISSING": "Missing payer",
+      "PAID_BY_UNKNOWN": "Unknown payer",
+      "SPLIT_TYPE_MISSING": "Missing split type",
+      "SPLIT_TYPE_UNKNOWN": "Unknown split type",
+      "PARTICIPANT_UNKNOWN": "Unknown participant",
+      "PARTICIPANT_NAME_CASE": "Name casing",
+      "NO_VALID_SPLIT_PARTICIPANTS": "No valid split participants",
+      "NO_PARTICIPANTS": "No participants in group",
+      "NO_SPLIT": "No split",
+      "SETTLEMENT_IN_NOTES": "Settlement detected",
+      "UNEXPECTED_ERROR": "Error",
+      "severity_error": "Error",
+      "severity_warning": "Warning",
+      "severity_info": "Info"
     }
   },
   "CreateFromReceipt": {
