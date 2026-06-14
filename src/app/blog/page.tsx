@@ -13,9 +13,9 @@ export const dynamic = 'force-static'
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const { blogIndex } = await basehub({ next: { revalidate: 60 } }).query({
+    const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: { title: true, subtitle: { plainText: true } },
-    })
+    })) as any
 
     return {
       title: {
@@ -57,7 +57,7 @@ export default async function BlogPage() {
         <RichText>{blogIndex.subtitle?.json.content}</RichText>
       </div>
       <ul className="grid gap-4">
-        {blogIndex.blogPosts.items.map((post) => (
+        {blogIndex.blogPosts.items.map((post: any) => (
           <li key={post._id} className="border-t py-6 flex gap-4 items-start">
             <div className="flex-1">
               <div className="text-muted-foreground text-sm mb-2">

@@ -237,7 +237,7 @@ async function BlogPostsList() {
   const blogIndex = await getBlogIndexWithPosts()
   return (
     <ul>
-      {blogIndex.blogPosts.items.map((post) => (
+      {blogIndex.blogPosts.items.map((post: any) => (
         <li key={post._id}>
           <Button variant="link" asChild size="sm" className="-ml-3 h-7">
             <Link

@@ -4,9 +4,9 @@ import { PropsWithChildren } from 'react'
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const { blogIndex } = await basehub({ next: { revalidate: 60 } }).query({
+    const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: { title: true, subtitle: { plainText: true } },
-    })
+    })) as any
 
     return {
       title: {

@@ -2,7 +2,7 @@ import { basehub } from 'basehub'
 
 export async function getPostBySlug(slug: string) {
   try {
-    const { blogIndex } = await basehub({ next: { revalidate: 60 } }).query({
+    const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: {
         blogPosts: {
           __args: { first: 1, filter: { _sys_slug: { eq: slug } } },
@@ -20,7 +20,7 @@ export async function getPostBySlug(slug: string) {
           },
         },
       },
-    })
+    })) as any
 
     return blogIndex.blogPosts.items.at(0)
   } catch {
@@ -37,16 +37,15 @@ export function formatDate(date: string) {
 
 export async function getPosts() {
   try {
-    const {
-      blogIndex: { blogPosts },
-    } = await basehub({ next: { revalidate: 60 } }).query({
+    const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: {
         blogPosts: {
           __args: { filter: { isPublished: true } },
           items: { _slug: true, _sys: { lastModifiedAt: true } },
         },
       },
-    })
+    })) as any
+    const { blogPosts } = blogIndex
     return blogPosts.items
   } catch {
     return []
@@ -55,7 +54,7 @@ export async function getPosts() {
 
 export async function getBlogIndexWithPosts() {
   try {
-    const { blogIndex } = await basehub({ next: { revalidate: 60 } }).query({
+    const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: {
         title: true,
         subtitle: { json: { content: true }, plainText: true },
@@ -75,7 +74,7 @@ export async function getBlogIndexWithPosts() {
           },
         },
       },
-    })
+    })) as any
     return blogIndex
   } catch {
     return {

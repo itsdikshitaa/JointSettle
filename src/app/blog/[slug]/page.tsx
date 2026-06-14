@@ -13,7 +13,7 @@ export const dynamic = 'force-static'
 
 export async function generateStaticParams() {
   const posts = await getPosts()
-  return posts.map(({ _slug }) => ({ slug: _slug }))
+  return posts.map(({ _slug }: { _slug: string }) => ({ slug: _slug }))
 }
 
 export async function generateMetadata({
