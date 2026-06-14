@@ -5,21 +5,22 @@ import * as z from 'zod'
 
 export const groupFormSchema = z
   .object({
-    name: z.string().min(2, 'min2').max(50, 'max50'),
+    name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
     information: z.string().optional(),
-    currency: z.string().min(1, 'min1').max(5, 'max5'),
+    currency: z.string().min(1, 'Currency is required').max(5, 'Currency must be at most 5 characters'),
     currencyCode: z.union([z.string().length(3).nullish(), z.literal('')]), // ISO-4217 currency code
     participants: z
       .array(
         z.object({
           id: z.string().optional(),
-          name: z.string().min(2, 'min2').max(50, 'max50'),
+          name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
         }),
       )
-      .min(1),
+      .min(1, 'At least one participant is required'),
   })
   .superRefine(({ participants }, ctx) => {
     participants.forEach((participant, i) => {
+      if (!participant.name) return // skip empty names
       participants.slice(0, i).forEach((otherParticipant) => {
         if (otherParticipant.name === participant.name) {
           ctx.addIssue({

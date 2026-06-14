@@ -78,7 +78,6 @@ export function GroupForm({
           participants: [
             { name: '' },
             { name: '' },
-            { name: '' },
           ],
         },
   })

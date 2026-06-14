@@ -1,10 +1,10 @@
 'use client'
 import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
-import { getGroupExpensesAction } from '@/app/groups/[groupId]/expenses/expense-list-fetch-action'
 import { Button } from '@/components/ui/button'
 import { SearchBar } from '@/components/ui/search-bar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getCurrencyFromGroup } from '@/lib/utils'
+import { AppRouterOutput } from '@/trpc/routers/_app'
 import { trpc } from '@/trpc/client'
 import dayjs, { type Dayjs } from 'dayjs'
 import { useTranslations } from 'next-intl'
@@ -13,12 +13,11 @@ import { forwardRef, useEffect, useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useDebounce } from 'use-debounce'
 import { useCurrentGroup } from '../current-group-context'
+import { useAuth } from '@/components/auth-provider'
 
 const PAGE_SIZE = 20
 
-type ExpensesType = NonNullable<
-  Awaited<ReturnType<typeof getGroupExpensesAction>>
->
+type ExpensesType = AppRouterOutput['groups']['expenses']['list']['expenses']
 
 const EXPENSE_GROUPS = {
   UPCOMING: 'upcoming',
@@ -60,6 +59,7 @@ function getGroupedExpensesByDate(expenses: ExpensesType) {
 
 export function ExpenseList() {
   const { groupId, group } = useCurrentGroup()
+  const { hash } = useAuth()
   const [searchText, setSearchText] = useState('')
   const [debouncedSearchText] = useDebounce(searchText, 300)
 
@@ -91,6 +91,7 @@ export function ExpenseList() {
       <SearchBar onValueChange={(value) => setSearchText(value)} />
       <ExpenseListForSearch
         groupId={groupId}
+        hash={hash!}
         searchText={debouncedSearchText}
       />
     </>
@@ -99,9 +100,11 @@ export function ExpenseList() {
 
 const ExpenseListForSearch = ({
   groupId,
+  hash,
   searchText,
 }: {
   groupId: string
+  hash: string
   searchText: string
 }) => {
   const utils = trpc.useUtils()
@@ -121,7 +124,7 @@ const ExpenseListForSearch = ({
     isLoading: expensesAreLoading,
     fetchNextPage,
   } = trpc.groups.expenses.list.useInfiniteQuery(
-    { groupId, limit: PAGE_SIZE, filter: searchText },
+    { groupId, hash: hash!, limit: PAGE_SIZE, filter: searchText },
     { getNextPageParam: ({ nextCursor }) => nextCursor },
   )
   const expenses = data?.pages.flatMap((page) => page.expenses)

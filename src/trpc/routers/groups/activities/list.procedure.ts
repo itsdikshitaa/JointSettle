@@ -1,4 +1,5 @@
 import { getActivities } from '@/lib/api'
+import { verifyGroupOwnership } from '@/lib/auth'
 import { baseProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
@@ -6,11 +7,16 @@ export const listGroupActivitiesProcedure = baseProcedure
   .input(
     z.object({
       groupId: z.string(),
+      hash: z.string().length(8),
       cursor: z.number().optional().default(0),
       limit: z.number().optional().default(5),
     }),
   )
-  .query(async ({ input: { groupId, cursor, limit } }) => {
+  .query(async ({ input: { groupId, hash, cursor, limit } }) => {
+    const isOwner = await verifyGroupOwnership(hash, groupId)
+    if (!isOwner) {
+      return { activities: [], hasMore: false, nextCursor: 0 }
+    }
     const activities = await getActivities(groupId, {
       offset: cursor,
       length: limit + 1,

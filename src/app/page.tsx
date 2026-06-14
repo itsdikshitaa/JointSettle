@@ -51,7 +51,7 @@ export default function HomePage() {
         <div className="relative mx-auto max-w-screen-md px-4 flex flex-col items-center gap-5 text-center">
           <div className="animate-fade-in-down">
             <Badge variant="secondary" className="mb-4 px-4 py-1.5 text-xs font-medium bg-blue-100/50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200/50 dark:border-blue-800/50 backdrop-blur-sm animate-pulse-soft">
-              No ads. No account. Open Source. Forever Free.
+              No ads. Simple hash-based auth. Open Source. Forever Free.
             </Badge>
           </div>
 
@@ -62,7 +62,7 @@ export default function HomePage() {
           </h1>
 
           <p className="max-w-[36rem] leading-relaxed text-muted-foreground text-lg sm:text-xl sm:leading-8 animate-fade-in-up animation-delay-200">
-            Split expenses effortlessly with friends and family. No sign-up required.
+            Split expenses effortlessly with friends and family. Sign up with a simple access hash — no email needed.
           </p>
 
           <div className="flex gap-3 animate-fade-in-up animation-delay-300">
@@ -232,10 +232,10 @@ export default function HomePage() {
                   </>
                 }
               >
-                JointSettle is more minimalist than Splitwise or Tricount, and you
-                don&rsquo;t need to create any user account to use it, nor will you
-                see any ads. It offers similar features, but we&rsquo;re still working
-                on some of them. Have a look at{' '}
+                JointSettle is more minimalist than Splitwise or Tricount, and uses
+                a simple hash-based authentication — no email or personal info needed.
+                It offers similar features, but we&rsquo;re still working on some
+                of them. Have a look at{' '}
                 <a
                   target="_blank"
                   className="text-blue-600 dark:text-blue-400 underline underline-offset-2 decoration-blue-400/30"

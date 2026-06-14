@@ -5,17 +5,19 @@ import { getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useLocale } from 'next-intl'
 import { useCurrentGroup } from '../current-group-context'
+import { useAuth } from '@/components/auth-provider'
 import { cn, formatCurrency } from '@/lib/utils'
 import { CreditCard, TrendingUp, ArrowDownCircle, ArrowUpCircle, DollarSign } from 'lucide-react'
 
 export function MiniDashboard() {
   const { groupId, group } = useCurrentGroup()
+  const { hash } = useAuth()
   const locale = useLocale()
   const activeUser = useActiveUser(groupId)
   const participantId = activeUser && activeUser !== 'None' ? activeUser : undefined
 
-  const { data: balancesData } = trpc.groups.balances.list.useQuery({ groupId })
-  const { data: statsData } = trpc.groups.stats.get.useQuery({ groupId, participantId })
+  const { data: balancesData } = trpc.groups.balances.list.useQuery({ groupId, hash: hash! })
+  const { data: statsData } = trpc.groups.stats.get.useQuery({ groupId, hash: hash!, participantId })
 
   if (!group || !balancesData) {
     return (

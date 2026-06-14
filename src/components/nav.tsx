@@ -8,10 +8,13 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/components/auth-provider'
+import { LogOut, LogIn } from 'lucide-react'
 
 export function Nav() {
   const t = useTranslations()
   const [scrolled, setScrolled] = useState(false)
+  const { isLoggedIn, logout, hash } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,20 +37,40 @@ export function Nav() {
 
       <nav role="navigation" aria-label="Menu" className="flex items-center">
         <ul className="flex items-center gap-1">
-          <li>
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className={`-my-3 transition-all duration-300 ${
-                scrolled
-                  ? 'text-foreground/80 hover:text-foreground'
-                  : 'text-foreground/70 hover:text-foreground'
-              }`}
-            >
-              <Link href="/groups">{t('Header.groups')}</Link>
-            </Button>
-          </li>
+          {isLoggedIn ? (
+            <li>
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className={`-my-3 transition-all duration-300 ${
+                  scrolled
+                    ? 'text-foreground/80 hover:text-foreground'
+                    : 'text-foreground/70 hover:text-foreground'
+                }`}
+              >
+                <Link href="/groups">{t('Header.groups')}</Link>
+              </Button>
+            </li>
+          ) : (
+            <li>
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className={`-my-3 transition-all duration-300 ${
+                  scrolled
+                    ? 'text-foreground/80 hover:text-foreground'
+                    : 'text-foreground/70 hover:text-foreground'
+                }`}
+              >
+                <Link href="/login">
+                  <LogIn className="w-3.5 h-3.5 mr-1" />
+                  Login
+                </Link>
+              </Button>
+            </li>
+          )}
           <li>
             <NewsButton />
           </li>
@@ -57,6 +80,23 @@ export function Nav() {
           <li>
             <ThemeToggle />
           </li>
+          {isLoggedIn && (
+            <li>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={logout}
+                className={`-my-3 transition-all duration-300 ${
+                  scrolled
+                    ? 'text-foreground/60 hover:text-red-500'
+                    : 'text-foreground/50 hover:text-red-400'
+                }`}
+                title={`Hash: ${hash}`}
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </Button>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

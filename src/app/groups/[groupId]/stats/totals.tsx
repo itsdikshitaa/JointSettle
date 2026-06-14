@@ -7,14 +7,16 @@ import { useActiveUser } from '@/lib/hooks'
 import { getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useCurrentGroup } from '../current-group-context'
+import { useAuth } from '@/components/auth-provider'
 
 export function Totals() {
   const { groupId, group } = useCurrentGroup()
+  const { hash } = useAuth()
   const activeUser = useActiveUser(groupId)
 
   const participantId =
     activeUser && activeUser !== 'None' ? activeUser : undefined
-  const { data } = trpc.groups.stats.get.useQuery({ groupId, participantId })
+  const { data } = trpc.groups.stats.get.useQuery({ groupId, hash: hash!, participantId })
 
   if (!data || !group)
     return (

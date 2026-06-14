@@ -5,6 +5,7 @@ import { formatCurrency, getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useLocale } from 'next-intl'
 import { useCurrentGroup } from '../current-group-context'
+import { useAuth } from '@/components/auth-provider'
 import { useMemo } from 'react'
 import {
   PieChart,
@@ -44,10 +45,11 @@ function CustomTooltip({ active, payload, label }: any) {
 
 export function StatsCharts() {
   const { groupId, group } = useCurrentGroup()
+  const { hash } = useAuth()
   const locale = useLocale()
   // Fetch all expenses for chart data
   const { data: expensesPages, isLoading } = trpc.groups.expenses.list.useInfiniteQuery(
-    { groupId, limit: 500 },
+    { groupId, hash: hash!, limit: 500 },
     { getNextPageParam: ({ nextCursor }) => nextCursor },
   )
   const allExpenses = expensesPages?.pages.flatMap((p) => p.expenses) ?? []

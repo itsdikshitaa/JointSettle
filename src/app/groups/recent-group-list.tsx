@@ -1,244 +1,113 @@
 'use client'
-import { AddGroupByUrlButton } from '@/app/groups/add-group-by-url-button'
-import {
-  RecentGroups,
-  getArchivedGroups,
-  getRecentGroups,
-  getStarredGroups,
-} from '@/app/groups/recent-groups-helpers'
 import { Button } from '@/components/ui/button'
-import { getGroups } from '@/lib/api'
 import { trpc } from '@/trpc/client'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { Loader2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { PropsWithChildren, useEffect, useState } from 'react'
-import { RecentGroupListCard } from './recent-group-list-card'
-
-export type RecentGroupsState =
-  | { status: 'pending' }
-  | {
-      status: 'partial'
-      groups: RecentGroups
-      starredGroups: string[]
-      archivedGroups: string[]
-    }
-  | {
-      status: 'complete'
-      groups: RecentGroups
-      groupsDetails: Awaited<ReturnType<typeof getGroups>>
-      starredGroups: string[]
-      archivedGroups: string[]
-    }
-
-function sortGroups({
-  groups,
-  starredGroups,
-  archivedGroups,
-}: {
-  groups: RecentGroups
-  starredGroups: string[]
-  archivedGroups: string[]
-}) {
-  const starredGroupInfo = []
-  const groupInfo = []
-  const archivedGroupInfo = []
-  for (const group of groups) {
-    if (starredGroups.includes(group.id)) {
-      starredGroupInfo.push(group)
-    } else if (archivedGroups.includes(group.id)) {
-      archivedGroupInfo.push(group)
-    } else {
-      groupInfo.push(group)
-    }
-  }
-  return {
-    starredGroupInfo,
-    groupInfo,
-    archivedGroupInfo,
-  }
-}
+import { useAuth } from '@/components/auth-provider'
 
 export function RecentGroupList() {
-  const [state, setState] = useState<RecentGroupsState>({ status: 'pending' })
-
-  function loadGroups() {
-    const groupsInStorage = getRecentGroups()
-    const starredGroups = getStarredGroups()
-    const archivedGroups = getArchivedGroups()
-    setState({
-      status: 'partial',
-      groups: groupsInStorage,
-      starredGroups,
-      archivedGroups,
-    })
-  }
-
-  useEffect(() => {
-    loadGroups()
-  }, [])
-
-  if (state.status === 'pending') return null
-
-  return (
-    <RecentGroupList_
-      groups={state.groups}
-      starredGroups={state.starredGroups}
-      archivedGroups={state.archivedGroups}
-      refreshGroupsFromStorage={() => loadGroups()}
-    />
+  const { hash, isLoggedIn, initialized } = useAuth()
+  const { data, isLoading } = trpc.groups.listByUser.useQuery(
+    { hash: hash! },
+    { enabled: isLoggedIn },
   )
-}
 
-function RecentGroupList_({
-  groups,
-  starredGroups,
-  archivedGroups,
-  refreshGroupsFromStorage,
-}: {
-  groups: RecentGroups
-  starredGroups: string[]
-  archivedGroups: string[]
-  refreshGroupsFromStorage: () => void
-}) {
-  const t = useTranslations('Groups')
-  const { data, isLoading } = trpc.groups.list.useQuery({
-    groupIds: groups.map((group) => group.id),
-  })
+  // Not initialized yet
+  if (!initialized) return null
 
-  if (isLoading || !data) {
+  // Not logged in - show signup prompt
+  if (!isLoggedIn) {
     return (
-      <GroupsPage reload={refreshGroupsFromStorage}>
-        <p>
-          <Loader2 className="w-4 m-4 mr-2 inline animate-spin" />{' '}
-          {t('loadingRecent')}
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <h1 className="font-bold text-2xl mb-4">My Groups</h1>
+        <p className="text-muted-foreground mb-6 max-w-md">
+          Sign up with a unique access hash to create and manage your own groups.
+          No email or personal info needed.
         </p>
-      </GroupsPage>
-    )
-  }
-
-  if (data.groups.length === 0) {
-    return (
-      <GroupsPage reload={refreshGroupsFromStorage}>
-        <div className="text-sm space-y-2">
-          <p>{t('NoRecent.description')}</p>
-          <p>
-            <Button variant="link" asChild className="-m-4">
-              <Link href={`/groups/create`}>{t('NoRecent.create')}</Link>
-            </Button>{' '}
-            {t('NoRecent.orAsk')}
-          </p>
-        </div>
-      </GroupsPage>
-    )
-  }
-
-  const { starredGroupInfo, groupInfo, archivedGroupInfo } = sortGroups({
-    groups,
-    starredGroups,
-    archivedGroups,
-  })
-
-  return (
-    <GroupsPage reload={refreshGroupsFromStorage}>
-      {starredGroupInfo.length > 0 && (
-        <>
-          <h2 className="mb-2">{t('starred')}</h2>
-          <GroupList
-            groups={starredGroupInfo}
-            groupDetails={data.groups}
-            archivedGroups={archivedGroups}
-            starredGroups={starredGroups}
-            refreshGroupsFromStorage={refreshGroupsFromStorage}
-          />
-        </>
-      )}
-
-      {groupInfo.length > 0 && (
-        <>
-          <h2 className="mt-6 mb-2">{t('recent')}</h2>
-          <GroupList
-            groups={groupInfo}
-            groupDetails={data.groups}
-            archivedGroups={archivedGroups}
-            starredGroups={starredGroups}
-            refreshGroupsFromStorage={refreshGroupsFromStorage}
-          />
-        </>
-      )}
-
-      {archivedGroupInfo.length > 0 && (
-        <>
-          <h2 className="mt-6 mb-2 opacity-50">{t('archived')}</h2>
-          <div className="opacity-50">
-            <GroupList
-              groups={archivedGroupInfo}
-              groupDetails={data.groups}
-              archivedGroups={archivedGroups}
-              starredGroups={starredGroups}
-              refreshGroupsFromStorage={refreshGroupsFromStorage}
-            />
-          </div>
-        </>
-      )}
-    </GroupsPage>
-  )
-}
-
-function GroupList({
-  groups,
-  groupDetails,
-  starredGroups,
-  archivedGroups,
-  refreshGroupsFromStorage,
-}: {
-  groups: RecentGroups
-  groupDetails?: AppRouterOutput['groups']['list']['groups']
-  starredGroups: string[]
-  archivedGroups: string[]
-  refreshGroupsFromStorage: () => void
-}) {
-  return (
-    <ul className="grid gap-2 sm:grid-cols-2">
-      {groups.map((group) => (
-        <RecentGroupListCard
-          key={group.id}
-          group={group}
-          groupDetail={groupDetails?.find(
-            (groupDetail) => groupDetail.id === group.id,
-          )}
-          isStarred={starredGroups.includes(group.id)}
-          isArchived={archivedGroups.includes(group.id)}
-          refreshGroupsFromStorage={refreshGroupsFromStorage}
-        />
-      ))}
-    </ul>
-  )
-}
-
-function GroupsPage({
-  children,
-  reload,
-}: PropsWithChildren<{ reload: () => void }>) {
-  const t = useTranslations('Groups')
-  return (
-    <>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <h1 className="font-bold text-2xl flex-1">
-          <Link href="/groups">{t('myGroups')}</Link>
-        </h1>
-        <div className="flex gap-2">
-          <AddGroupByUrlButton reload={reload} />
-          <Button asChild>
-            <Link href="/groups/create">
-              {/* <Plus className="w-4 h-4 mr-2" /> */}
-              {t('create')}
-            </Link>
+        <div className="flex gap-3">
+          <Button asChild className="bg-gradient-to-br from-blue-600 to-indigo-600">
+            <Link href="/signup">Sign Up</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/login">Log In</Link>
           </Button>
         </div>
       </div>
-      <div>{children}</div>
-    </>
+    )
+  }
+
+  // Loading user's groups
+  if (isLoading) {
+    return (
+      <div>
+        <h1 className="font-bold text-2xl mb-6">My Groups</h1>
+        <p className="text-sm text-muted-foreground">
+          <Loader2 className="w-3.5 h-3.5 mr-2 inline animate-spin" />
+          Loading your groups...
+        </p>
+      </div>
+    )
+  }
+
+  const groups = data?.groups ?? []
+
+  // No groups yet
+  if (groups.length === 0) {
+    return (
+      <div>
+        <h1 className="font-bold text-2xl mb-6">My Groups</h1>
+        <p className="text-muted-foreground mb-4">
+          You don&apos;t have any groups yet. Create one to get started!
+        </p>
+        <Button asChild className="bg-gradient-to-br from-blue-600 to-indigo-600">
+          <Link href="/groups/create">Create a group</Link>
+        </Button>
+      </div>
+    )
+  }
+
+  // Show user's groups
+  return (
+    <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+        <h1 className="font-bold text-2xl">My Groups</h1>
+        <Button asChild>
+          <Link href="/groups/create">Create a group</Link>
+        </Button>
+      </div>
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {groups.map((group) => (
+          <li key={group.id}>
+            <GroupCard group={group} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function GroupCard({ group }: { group: NonNullable<AppRouterOutput['groups']['listByUser']['groups']>[number] }) {
+  return (
+    <Link
+      href={`/groups/${group.id}`}
+      className="block rounded-xl border border-blue-100/30 dark:border-blue-900/20 bg-white/60 dark:bg-white/5 backdrop-blur-sm p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-600/10 hover:border-blue-300/40 dark:hover:border-blue-700/40"
+    >
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 flex items-center justify-center shrink-0">
+          <span className="text-blue-700 dark:text-blue-400 font-bold">
+            {group.name.charAt(0).toUpperCase()}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <p className="font-semibold text-foreground truncate">
+            {group.name}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {group._count.participants} participant{group._count.participants !== 1 ? 's' : ''}
+          </p>
+        </div>
+      </div>
+    </Link>
   )
 }

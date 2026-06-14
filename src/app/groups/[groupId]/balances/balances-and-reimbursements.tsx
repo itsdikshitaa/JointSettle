@@ -9,13 +9,16 @@ import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 import { useCurrentGroup } from '../current-group-context'
+import { useAuth } from '@/components/auth-provider'
 
 export default function BalancesAndReimbursements() {
   const utils = trpc.useUtils()
   const { groupId, group } = useCurrentGroup()
+  const { hash } = useAuth()
   const { data: balancesData, isLoading: balancesAreLoading } =
     trpc.groups.balances.list.useQuery({
       groupId,
+      hash: hash!,
     })
   const t = useTranslations('Balances')
 

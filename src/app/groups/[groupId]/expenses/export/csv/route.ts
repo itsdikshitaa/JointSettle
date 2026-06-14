@@ -1,7 +1,8 @@
+import { verifyGroupOwnership } from '@/lib/auth'
 import { getCurrency } from '@/lib/currency'
+import { prisma } from '@/lib/prisma'
 import { formatAmountAsDecimal, getCurrencyFromGroup } from '@/lib/utils'
 import { Parser } from '@json2csv/plainjs'
-import { PrismaClient } from '@prisma/client'
 import contentDisposition from 'content-disposition'
 import { NextResponse } from 'next/server'
 
@@ -15,18 +16,28 @@ const splitModeLabel = {
 function formatDate(isoDateString: Date): string {
   const date = new Date(isoDateString)
   const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are zero-based
+  const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}` // YYYY-MM-DD format
+  return `${year}-${month}-${day}`
 }
-
-const prisma = new PrismaClient()
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ groupId: string }> },
 ) {
   const { groupId } = await params
+
+  // Auth check
+  const { searchParams } = new URL(req.url)
+  const hash = searchParams.get('hash')
+  if (!hash || hash.length !== 8) {
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+  }
+  const isOwner = await verifyGroupOwnership(hash, groupId)
+  if (!isOwner) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+  }
+
   const group = await prisma.group.findUnique({
     where: { id: groupId },
     select: {
@@ -56,32 +67,6 @@ export async function GET(
   if (!group) {
     return NextResponse.json({ error: 'Invalid group ID' }, { status: 404 })
   }
-
-  /*
-
-  CSV Columns:
-  - Date: The date of the expense.
-  - Description: A brief description of the expense.
-  - Category: The category of the expense (e.g., Food, Travel, etc.).
-  - Currency: The currency in which the expense is recorded.
-  - Cost: The amount spent.
-  - Original cost: The amount spent in the original currency.
-  - Original currency: The currency the amount was originally spent in.
-  - Conversion rate: The rate used to convert the amount.
-  - Is Reimbursement: Whether the expense is a reimbursement or not.
-  - Split mode: The method used to split the expense (e.g., Evenly, By shares, By percentage, By amount).
-  - UserA, UserB: User-specific data or balances (e.g., amount owed or contributed by each user).
-
-  Example Table:
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-  | Date       | Description      | Category | Currency | Cost     | Original cost | Original currency | Conversion rate | Is reinbursement | Split mode           | User A | User B    |
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-  | 2025-01-06 | Dinner with team | Food     | INR      | 5000     |               |                   |                 | No               | Evenly               | 2500   | -2500     |
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-  | 2025-02-07 | Plane tickets    | Travel   | INR      | 97264.09 | 1000          | EUR               | 97.2641         | No               | Unevenly - By amount | -80000 | -17264.09 |
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-
-  */
 
   const fields = [
     { label: 'Date', value: 'date' },
@@ -153,7 +138,6 @@ export async function GET(
   const date = new Date().toISOString().split('T')[0]
   const filename = `JointSettle Export - ${group.name} - ${date}.csv`
 
-  // \uFEFF character is added at the beginning of the CSV content to ensure that it is interpreted as UTF-8 with BOM (Byte Order Mark), which helps some applications correctly interpret the encoding.
   return new NextResponse(`\uFEFF${csv}`, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',

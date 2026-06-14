@@ -3,6 +3,7 @@ import { fireSuccessConfetti } from '@/lib/confetti'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { trpc } from '@/trpc/client'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/components/auth-provider'
 import { ExpenseForm } from './expense-form'
 
 export function EditExpenseForm({
@@ -14,7 +15,8 @@ export function EditExpenseForm({
   expenseId: string
   runtimeFeatureFlags: RuntimeFeatureFlags
 }) {
-  const { data: groupData } = trpc.groups.get.useQuery({ groupId })
+  const { hash } = useAuth()
+  const { data: groupData } = trpc.groups.get.useQuery({ groupId, hash: hash! })
   const group = groupData?.group
 
   const { data: categoriesData } = trpc.categories.list.useQuery()
@@ -23,6 +25,7 @@ export function EditExpenseForm({
   const { data: expenseData } = trpc.groups.expenses.get.useQuery({
     groupId,
     expenseId,
+    hash: hash!,
   })
   const expense = expenseData?.expense
 
@@ -45,6 +48,7 @@ export function EditExpenseForm({
         await updateExpenseMutateAsync({
           expenseId,
           groupId,
+          hash: hash!,
           expenseFormValues,
           participantId,
         })
@@ -56,6 +60,7 @@ export function EditExpenseForm({
         await deleteExpenseMutateAsync({
           expenseId,
           groupId,
+          hash: hash!,
           participantId,
         })
         utils.groups.expenses.invalidate()

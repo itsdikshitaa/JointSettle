@@ -12,7 +12,12 @@ export function randomId() {
   return nanoid()
 }
 
-export async function createGroup(groupFormValues: GroupFormValues) {
+export async function createGroup(groupFormValues: GroupFormValues, hash: string) {
+  // Look up the user by their unique hash to get the internal userId
+  const user = await prisma.user.findUnique({ where: { hash } })
+  if (!user) {
+    throw new Error('User not found')
+  }
   return prisma.group.create({
     data: {
       id: randomId(),
@@ -20,12 +25,21 @@ export async function createGroup(groupFormValues: GroupFormValues) {
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      userId: user.id,
       participants: {
         createMany: {
-          data: groupFormValues.participants.map(({ name }) => ({
-            id: randomId(),
-            name,
-          })),
+          data: (() => {
+            const validParticipants = groupFormValues.participants.filter(
+              (p) => p.name.trim().length >= 2,
+            )
+            if (validParticipants.length === 0) {
+              throw new Error('At least one participant with a valid name is required')
+            }
+            return validParticipants.map(({ name }) => ({
+              id: randomId(),
+              name,
+            }))
+          })(),
         },
       },
     },
@@ -144,6 +158,21 @@ export async function getGroups(groupIds: string[]) {
     await prisma.group.findMany({
       where: { id: { in: groupIds } },
       include: { _count: { select: { participants: true } } },
+    })
+  ).map((group) => ({
+    ...group,
+    createdAt: group.createdAt.toISOString(),
+  }))
+}
+
+export async function getUserGroups(hash: string) {
+  const user = await prisma.user.findUnique({ where: { hash } })
+  if (!user) return []
+  return (
+    await prisma.group.findMany({
+      where: { userId: user.id },
+      include: { _count: { select: { participants: true } } },
+      orderBy: { createdAt: 'desc' },
     })
   ).map((group) => ({
     ...group,

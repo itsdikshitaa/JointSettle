@@ -1,4 +1,5 @@
 import { getGroupExpenses } from '@/lib/api'
+import { verifyGroupOwnership } from '@/lib/auth'
 import { baseProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
@@ -6,12 +7,17 @@ export const listGroupExpensesProcedure = baseProcedure
   .input(
     z.object({
       groupId: z.string().min(1),
+      hash: z.string().length(8),
       cursor: z.number().optional(),
       limit: z.number().optional(),
       filter: z.string().optional(),
     }),
   )
-  .query(async ({ input: { groupId, cursor = 0, limit = 10, filter } }) => {
+  .query(async ({ input: { groupId, hash, cursor = 0, limit = 10, filter } }) => {
+    const isOwner = await verifyGroupOwnership(hash, groupId)
+    if (!isOwner) {
+      return { expenses: [], hasMore: false, nextCursor: 0 }
+    }
     const expenses = await getGroupExpenses(groupId, {
       offset: cursor,
       length: limit + 1,

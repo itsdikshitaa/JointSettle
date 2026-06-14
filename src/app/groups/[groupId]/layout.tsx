@@ -1,4 +1,3 @@
-import { cached } from '@/app/cached-functions'
 import { Metadata } from 'next'
 import { PropsWithChildren } from 'react'
 import { GroupLayoutClient } from './layout.client'
@@ -10,13 +9,13 @@ type Props = {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // Group name is resolved on the client side after auth check to avoid leaking
+  // group names in server-rendered metadata
   const { groupId } = await params
-  const group = await cached.getGroup(groupId)
-
   return {
     title: {
-      default: group?.name ?? '',
-      template: `%s · ${group?.name} · JointSettle`,
+      default: `Group · JointSettle`,
+      template: `%s · Group · JointSettle`,
     },
   }
 }

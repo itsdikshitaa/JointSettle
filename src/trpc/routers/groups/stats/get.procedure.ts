@@ -1,4 +1,5 @@
 import { getGroupExpenses } from '@/lib/api'
+import { verifyGroupOwnership } from '@/lib/auth'
 import {
   getTotalActiveUserPaidFor,
   getTotalActiveUserShare,
@@ -11,10 +12,15 @@ export const getGroupStatsProcedure = baseProcedure
   .input(
     z.object({
       groupId: z.string().min(1),
+      hash: z.string().length(8),
       participantId: z.string().optional(),
     }),
   )
-  .query(async ({ input: { groupId, participantId } }) => {
+  .query(async ({ input: { groupId, hash, participantId } }) => {
+    const isOwner = await verifyGroupOwnership(hash, groupId)
+    if (!isOwner) {
+      return { totalGroupSpendings: 0, totalParticipantSpendings: undefined, totalParticipantShare: undefined }
+    }
     const expenses = await getGroupExpenses(groupId)
     const totalGroupSpendings = getTotalGroupSpending(expenses)
 

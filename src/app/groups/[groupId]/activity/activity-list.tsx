@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useCurrentGroup } from '../current-group-context'
+import { useAuth } from '@/components/auth-provider'
 
 const PAGE_SIZE = 20
 
@@ -86,13 +87,14 @@ ActivitiesLoading.displayName = 'ActivitiesLoading'
 export function ActivityList() {
   const t = useTranslations('Activity')
   const { group, groupId } = useCurrentGroup()
+  const { hash } = useAuth()
 
   const {
     data: activitiesData,
     isLoading,
     fetchNextPage,
   } = trpc.groups.activities.list.useInfiniteQuery(
-    { groupId, limit: PAGE_SIZE },
+    { groupId, hash: hash!, limit: PAGE_SIZE },
     { getNextPageParam: ({ nextCursor }) => nextCursor },
   )
   const { ref: loadingRef, inView } = useInView()

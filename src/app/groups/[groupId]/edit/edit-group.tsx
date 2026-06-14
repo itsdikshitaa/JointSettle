@@ -2,14 +2,16 @@
 
 import { GroupForm } from '@/components/group-form'
 import { trpc } from '@/trpc/client'
+import { useAuth } from '@/components/auth-provider'
 import { Settings } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCurrentGroup } from '../current-group-context'
 
 export const EditGroup = () => {
   const { groupId } = useCurrentGroup()
+  const { hash } = useAuth()
   const t = useTranslations('Settings')
-  const { data, isLoading } = trpc.groups.getDetails.useQuery({ groupId })
+  const { data, isLoading } = trpc.groups.getDetails.useQuery({ groupId, hash: hash! })
   const { mutateAsync } = trpc.groups.update.useMutation()
   const utils = trpc.useUtils()
 
@@ -31,7 +33,7 @@ export const EditGroup = () => {
       <GroupForm
         group={data?.group}
         onSubmit={async (groupFormValues, participantId) => {
-          await mutateAsync({ groupId, participantId, groupFormValues })
+          await mutateAsync({ groupId, hash: hash!, participantId, groupFormValues })
           await utils.groups.invalidate()
         }}
         protectedParticipantIds={data?.participantsWithExpenses}

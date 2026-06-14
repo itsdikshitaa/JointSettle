@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 
 export default function ExportButton({ groupId }: { groupId: string }) {
+  const { hash } = useAuth()
   const t = useTranslations('Expenses')
   return (
     <DropdownMenu>
@@ -24,7 +26,7 @@ export default function ExportButton({ groupId }: { groupId: string }) {
         <DropdownMenuItem asChild>
           <Link
             prefetch={false}
-            href={`/groups/${groupId}/expenses/export/json`}
+            href={`/groups/${groupId}/expenses/export/json?hash=${hash}`}
             target="_blank"
             title={t('exportJson')}
           >
@@ -37,7 +39,7 @@ export default function ExportButton({ groupId }: { groupId: string }) {
         <DropdownMenuItem asChild>
           <Link
             prefetch={false}
-            href={`/groups/${groupId}/expenses/export/csv`}
+            href={`/groups/${groupId}/expenses/export/csv?hash=${hash}`}
             target="_blank"
             title={t('exportCsv')}
           >

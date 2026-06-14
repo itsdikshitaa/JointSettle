@@ -7,8 +7,15 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  url       = env("DATABASE_URL")
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id        String   @id
+  hash      String   @unique
+  createdAt DateTime @default(now())
+  groups    Group[]
 }
 
 model Group {
@@ -17,10 +24,14 @@ model Group {
   information  String?       @db.Text
   currency     String        @default("$")
   currencyCode String?
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   participants Participant[]
   expenses     Expense[]
   activities   Activity[]
   createdAt    DateTime      @default(now())
+
+  @@index([userId])
 }
 
 model Participant {

@@ -50,3 +50,4 @@ postgres-data
 .idea/
 *.swp
 *.swo
+.env*

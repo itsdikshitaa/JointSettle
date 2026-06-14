@@ -5,6 +5,7 @@ import { Nav } from '@/components/nav'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Button } from '@/components/ui/button'
+import { ClientLayout } from '@/components/client-layout'
 import { Toaster } from '@/components/ui/toaster'
 import { env } from '@/lib/env'
 import { TRPCProvider } from '@/trpc/client'
@@ -225,7 +226,7 @@ export default async function RootLayout({
             <Suspense>
               <ProgressBar />
             </Suspense>
-            <Content>{children}</Content>
+            <ClientLayout><Content>{children}</Content></ClientLayout>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

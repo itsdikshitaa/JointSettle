@@ -3,6 +3,7 @@ import { fireCreateConfetti } from '@/lib/confetti'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { trpc } from '@/trpc/client'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/components/auth-provider'
 import { ExpenseForm } from './expense-form'
 
 export function CreateExpenseForm({
@@ -13,7 +14,8 @@ export function CreateExpenseForm({
   expenseId?: string
   runtimeFeatureFlags: RuntimeFeatureFlags
 }) {
-  const { data: groupData } = trpc.groups.get.useQuery({ groupId })
+  const { hash } = useAuth()
+  const { data: groupData } = trpc.groups.get.useQuery({ groupId, hash: hash! })
   const group = groupData?.group
 
   const { data: categoriesData } = trpc.categories.list.useQuery()
@@ -34,6 +36,7 @@ export function CreateExpenseForm({
       onSubmit={async (expenseFormValues, participantId) => {
         await createExpenseMutateAsync({
           groupId,
+          hash: hash!,
           expenseFormValues,
           participantId,
         })

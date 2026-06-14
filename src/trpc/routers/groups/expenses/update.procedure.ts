@@ -1,6 +1,8 @@
 import { updateExpense } from '@/lib/api'
+import { verifyGroupOwnership } from '@/lib/auth'
 import { expenseFormSchema } from '@/lib/schemas'
 import { baseProcedure } from '@/trpc/init'
+import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 export const updateGroupExpenseProcedure = baseProcedure
@@ -8,14 +10,19 @@ export const updateGroupExpenseProcedure = baseProcedure
     z.object({
       expenseId: z.string().min(1),
       groupId: z.string().min(1),
+      hash: z.string().length(8),
       expenseFormValues: expenseFormSchema,
       participantId: z.string().optional(),
     }),
   )
   .mutation(
     async ({
-      input: { expenseId, groupId, expenseFormValues, participantId },
+      input: { expenseId, groupId, hash, expenseFormValues, participantId },
     }) => {
+      const isOwner = await verifyGroupOwnership(hash, groupId)
+      if (!isOwner) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You do not own this group' })
+      }
       const expense = await updateExpense(
         groupId,
         expenseId,
