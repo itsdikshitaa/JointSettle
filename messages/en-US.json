@@ -453,6 +453,8 @@
       "SPLIT_TYPE_UNKNOWN": "Unknown split type",
       "PARTICIPANT_UNKNOWN": "Unknown participant",
       "PARTICIPANT_NAME_CASE": "Name casing",
+      "PARTICIPANT_NAME_SIMILAR": "Similar participant name",
+      "MEMBER_NOT_ACTIVE": "Member not active at expense date",
       "NO_VALID_SPLIT_PARTICIPANTS": "No valid split participants",
       "NO_PARTICIPANTS": "No participants in group",
       "NO_SPLIT": "No split",

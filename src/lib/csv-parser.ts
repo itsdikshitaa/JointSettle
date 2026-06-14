@@ -444,6 +444,73 @@ export function findParticipant(
   return null
 }
 
+/**
+ * Detect if a participant name is similar to an existing participant name
+ * but not an exact match (for anomaly flagging).
+ * Uses fuzzy matching: returns the closest match if similarity is above threshold.
+ */
+export function findSimilarParticipant(
+  name: string,
+  participants: Array<{ id: string; name: string }>,
+): { id: string; name: string; similarity: number } | null {
+  const trimmed = name.trim().toLowerCase()
+  if (!trimmed) return null
+
+  let bestMatch: { id: string; name: string; similarity: number } | null = null
+  let bestScore = 0
+
+  for (const p of participants) {
+    const pName = p.name.toLowerCase()
+
+    // Exact match already handled by findParticipant, skip
+    if (pName === trimmed) continue
+
+    // Check if one name contains the other
+    if (pName.includes(trimmed) || trimmed.includes(pName)) {
+      const score = Math.min(trimmed.length, pName.length) / Math.max(trimmed.length, pName.length)
+      if (score > bestScore) {
+        bestScore = score
+        bestMatch = { id: p.id, name: p.name, similarity: score }
+      }
+    }
+
+    // Check character overlap for similarity
+    const commonChars = trimmed.split('').filter((c) => pName.includes(c)).length
+    const maxLen = Math.max(trimmed.length, pName.length)
+    const overlapScore = commonChars / maxLen
+    if (overlapScore > bestScore && overlapScore >= 0.5) {
+      bestScore = overlapScore
+      bestMatch = { id: p.id, name: p.name, similarity: overlapScore }
+    }
+  }
+
+  return bestMatch && bestScore >= 0.5 ? bestMatch : null
+}
+
+/**
+ * Check if a participant was active on a given date based on their joinedAt/leftAt.
+ * Returns true if the participant is NOT active on that date (for anomaly flagging).
+ */
+export function isParticipantInactiveOnDate(
+  participant: { joinedAt: Date; leftAt: Date | null },
+  expenseDate: Date,
+): boolean {
+  // Normalize to date-only strings to avoid time-of-day comparison issues
+  const joinedStr = participant.joinedAt.toISOString().split('T')[0]
+  const expenseStr = expenseDate.toISOString().split('T')[0]
+
+  // If participant joined after the expense date, they weren't active
+  if (joinedStr > expenseStr) return true
+
+  // If participant left before the expense date, they weren't active
+  if (participant.leftAt) {
+    const leftStr = participant.leftAt.toISOString().split('T')[0]
+    if (leftStr < expenseStr) return true
+  }
+
+  return false
+}
+
 // ─── Anomaly Helpers ──────────────────────────────────────────────────────
 
 let anomalyCounter = 0

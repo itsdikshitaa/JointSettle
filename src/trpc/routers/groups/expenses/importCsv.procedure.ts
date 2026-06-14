@@ -18,6 +18,8 @@ import {
   parseSplitWith,
   mapSplitMode,
   findParticipant,
+  findSimilarParticipant,
+  isParticipantInactiveOnDate,
   createAnomaly,
   resetAnomalyCounter,
   EXPORT_SPLIT_MODE_MAP,
@@ -395,8 +397,20 @@ async function parseAssignmentCsv(
       }
       if (!payerMatch.exact) {
         anomalies.push(createAnomaly(rowNum, 'paid_by', 'PARTICIPANT_NAME_CASE', 'info', 'auto-fixed', `Participant name case mismatch: "${paidByRaw}" matched to "${payerMatch.name}"`, undefined, paidByRaw))
+        // Check for similar-but-different name
+        const similarPayer = payerMatch.name.toLowerCase() !== paidByRaw.trim().toLowerCase()
+        if (similarPayer) {
+          anomalies.push(createAnomaly(rowNum, 'paid_by', 'PARTICIPANT_NAME_SIMILAR', 'warning', 'flagged', `Name "${paidByRaw}" is similar to participant "${payerMatch.name}" — confirm correct match`))
+        }
       }
       const paidById = payerMatch.id
+
+      // Check if payer was active on the expense date
+      const payerParticipant = group.participants.find((p) => p.id === paidById)
+      if (payerParticipant && isParticipantInactiveOnDate(payerParticipant, expenseDate)) {
+        anomalies.push(createAnomaly(rowNum, 'paid_by', 'MEMBER_NOT_ACTIVE', 'error', 'skipped', `Payer "${payerMatch.name}" was not an active member on ${expenseDate.toISOString().split('T')[0]} (joined: ${payerParticipant.joinedAt.toISOString().split('T')[0]}${payerParticipant.leftAt ? `, left: ${payerParticipant.leftAt.toISOString().split('T')[0]}` : ''})`))
+        continue
+      }
 
       // ── Step 6: Check notes for settlement signals ──────────────────
       const notesRaw = (row.notes || row.Notes || '').trim()
@@ -430,7 +444,20 @@ async function parseAssignmentCsv(
         }
         if (!match.exact) {
           anomalies.push(createAnomaly(rowNum, 'split_with', 'PARTICIPANT_NAME_CASE', 'info', 'auto-fixed', `Name "${name}" matched to "${match.name}"`))
+          // Check for similar-but-different name
+          const similarName = match.name.toLowerCase() !== name.trim().toLowerCase()
+          if (similarName) {
+            anomalies.push(createAnomaly(rowNum, 'split_with', 'PARTICIPANT_NAME_SIMILAR', 'warning', 'flagged', `Name "${name}" is similar to participant "${match.name}" — confirm correct match`))
+          }
         }
+
+        // Check if participant was active on the expense date
+        const splitParticipantFull = group.participants.find((p) => p.id === match.id)
+        if (splitParticipantFull && isParticipantInactiveOnDate(splitParticipantFull, expenseDate)) {
+          anomalies.push(createAnomaly(rowNum, 'split_with', 'MEMBER_NOT_ACTIVE', 'error', 'skipped', `Participant "${match.name}" was not an active member on ${expenseDate.toISOString().split('T')[0]} (joined: ${splitParticipantFull.joinedAt.toISOString().split('T')[0]}${splitParticipantFull.leftAt ? `, left: ${splitParticipantFull.leftAt.toISOString().split('T')[0]}` : ''})`))
+          continue
+        }
+
         splitParticipants.push({ id: match.id, name: match.name })
       }
 
@@ -458,6 +485,18 @@ async function parseAssignmentCsv(
           }
           if (!match.exact) {
             anomalies.push(createAnomaly(rowNum, 'split_details', 'PARTICIPANT_NAME_CASE', 'info', 'auto-fixed', `Name "${detail.participantName}" matched to "${match.name}"`))
+            // Check for similar-but-different name
+            const similarName = match.name.toLowerCase() !== detail.participantName.trim().toLowerCase()
+            if (similarName) {
+              anomalies.push(createAnomaly(rowNum, 'split_details', 'PARTICIPANT_NAME_SIMILAR', 'warning', 'flagged', `Name "${detail.participantName}" is similar to participant "${match.name}" — confirm correct match`))
+            }
+          }
+
+          // Check if participant was active on the expense date
+          const detailParticipantFull = group.participants.find((p) => p.id === match.id)
+          if (detailParticipantFull && isParticipantInactiveOnDate(detailParticipantFull, expenseDate)) {
+            anomalies.push(createAnomaly(rowNum, 'split_details', 'MEMBER_NOT_ACTIVE', 'error', 'skipped', `Participant "${match.name}" was not an active member on ${expenseDate.toISOString().split('T')[0]} (joined: ${detailParticipantFull.joinedAt.toISOString().split('T')[0]}${detailParticipantFull.leftAt ? `, left: ${detailParticipantFull.leftAt.toISOString().split('T')[0]}` : ''})`))
+            continue
           }
 
           let shares = 1
