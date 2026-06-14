@@ -80,11 +80,7 @@ export default function HomePage() {
             </Button>
           </div>
 
-          <div className="mt-6 sm:mt-8 max-w-[42rem] leading-relaxed text-muted-foreground text-lg sm:text-xl animate-fade-in-up animation-delay-500">
-            <div className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-blue-100/30 dark:border-blue-900/20 shadow-sm">
-              <StatsDisplay />
-            </div>
-          </div>
+          <StatsDisplay />
         </div>
       </section>
 

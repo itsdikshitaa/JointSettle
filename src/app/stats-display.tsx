@@ -1,34 +1,46 @@
 'use client'
 
-import { Stats, getStatsAction } from '@/app/stats-display-actions'
+import { useAuth } from '@/components/auth-provider'
+import { getUserStatsAction, type Stats } from '@/app/stats-display-actions'
 import { useEffect, useState } from 'react'
 
+/**
+ * Shows user-specific stats when logged in, or nothing when not logged in.
+ * Never leaks total database counts to unauthenticated users.
+ */
 export function StatsDisplay() {
-  const stats = useStats()
-
-  return (
-    <>
-      Already{' '}
-      <strong>
-        {stats ? <AnimatedCounter count={stats?.groupsCount} /> : '…'}
-      </strong>{' '}
-      groups and <br className="sm:hidden" />
-      <strong>
-        {stats ? <AnimatedCounter count={stats?.expensesCount} /> : '…'}
-      </strong>{' '}
-      expenses created.
-    </>
-  )
-}
-
-function useStats() {
+  const { hash, isLoggedIn, initialized } = useAuth()
   const [stats, setStats] = useState<null | Stats>(null)
 
   useEffect(() => {
-    getStatsAction().then(setStats).catch(console.error)
-  }, [])
+    if (!initialized) return
 
-  return stats
+    if (isLoggedIn && hash) {
+      getUserStatsAction(hash).then((s) => {
+        if (s) setStats(s)
+      }).catch(console.error)
+    } else {
+      setStats(null)
+    }
+  }, [isLoggedIn, hash, initialized])
+
+  if (!initialized || !isLoggedIn || !stats) return null
+
+  return (
+    <div className="mt-6 sm:mt-8 max-w-[42rem] leading-relaxed text-muted-foreground text-lg sm:text-xl animate-fade-in-up animation-delay-500">
+      <div className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-blue-100/30 dark:border-blue-900/20 shadow-sm">
+        You have{' '}
+        <strong>
+          <AnimatedCounter count={stats.groupsCount} />
+        </strong>{' '}
+        group{stats.groupsCount !== 1 ? 's' : ''} and{' '}
+        <strong>
+          <AnimatedCounter count={stats.expensesCount} />
+        </strong>{' '}
+        expense{stats.expensesCount !== 1 ? 's' : ''}.
+      </div>
+    </div>
+  )
 }
 
 export function AnimatedCounter({ count }: { count: number }) {
