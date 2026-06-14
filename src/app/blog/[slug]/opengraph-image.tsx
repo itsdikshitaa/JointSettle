@@ -24,13 +24,6 @@ export default async function OGImage({
     new URL('../../../../public/logo-with-text.png', import.meta.url),
   ).then((res) => res.arrayBuffer())
 
-  const geistBlackData = await fetch(
-    new URL('../../../../public/Geist-Black.otf', import.meta.url),
-  ).then((res) => res.arrayBuffer())
-  const geistRegularData = await fetch(
-    new URL('../../../../public/Geist-Regular.otf', import.meta.url),
-  ).then((res) => res.arrayBuffer())
-
   return new ImageResponse(
     (
       <div
@@ -42,6 +35,7 @@ export default async function OGImage({
           flexDirection: 'column',
           justifyContent: 'flex-end',
           padding: 48,
+          fontFamily: 'sans-serif',
         }}
       >
         <div
@@ -50,7 +44,6 @@ export default async function OGImage({
             color: '#00000080',
             display: 'flex',
             alignItems: 'center',
-            fontFamily: 'GeistRegular',
             gap: 12,
           }}
         >
@@ -68,8 +61,6 @@ export default async function OGImage({
                     objectPosition: 'center',
                   }}
                   src={post.author.avatar.url}
-                  // width={post.author.avatar.width}
-                  // height={post.author.avatar.height}
                   alt=""
                 />
               )}
@@ -83,12 +74,12 @@ export default async function OGImage({
             marginTop: 24,
             display: 'flex',
             fontSize: 72,
-            fontFamily: 'GeistBlack',
+            fontWeight: 900,
             lineHeight: 1.1,
             marginBottom: 32,
           }}
         >
-          <div style={{ textWrap: 'balance' } as any}>{post._title}</div>
+          <div>{post._title}</div>
         </div>
 
         <div
@@ -118,20 +109,6 @@ export default async function OGImage({
         </div>
       </div>
     ),
-    {
-      ...size,
-      fonts: [
-        {
-          name: 'GeistBlack',
-          data: geistBlackData,
-          style: 'normal',
-        },
-        {
-          name: 'GeistRegular',
-          data: geistRegularData,
-          style: 'normal',
-        },
-      ],
-    },
+    { ...size },
   )
 }
