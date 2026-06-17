@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { formatDate, getPostBySlug } from '@/app/blog/[slug]/helpers'
 import { notFound } from 'next/navigation'
 import { ImageResponse } from 'next/og'

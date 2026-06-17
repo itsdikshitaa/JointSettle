@@ -216,7 +216,7 @@ export default async function RootLayout({
       <AxiomWebVitals />
       <ApplePwaSplash icon="/logo-with-text.png" color="#2563EB" />
       <body className="min-h-[100dvh] flex flex-col items-stretch bg-background font-sans" suppressHydrationWarning>
-        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('[bis_skin_checked]').forEach(e=>e.removeAttribute('bis_skin_checked'))})` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(()=>{const e=new MutationObserver(()=>{document.querySelectorAll('[bis_skin_checked]').forEach(n=>n.removeAttribute('bis_skin_checked'));});e.observe(document.documentElement,{attributes:true,subtree:true,attributeFilter:['bis_skin_checked']});})()` }} />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

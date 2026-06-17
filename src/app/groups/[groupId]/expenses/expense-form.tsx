@@ -333,9 +333,12 @@ export function ExpenseForm({
     originalCurrency.code.length &&
     originalCurrency.code !== group.currencyCode
 
+  const watchedSplitMode = form.watch('splitMode')
+  const watchedAmount = form.watch('amount')
+
   useEffect(() => {
     setManuallyEditedParticipants(new Set())
-  }, [form.watch('splitMode'), form.watch('amount')])
+  }, [watchedSplitMode, watchedAmount])
 
   useEffect(() => {
     const splitMode = form.getValues().splitMode
@@ -387,8 +390,10 @@ export function ExpenseForm({
     }
   }, [
     manuallyEditedParticipants,
-    form.watch('amount'),
-    form.watch('splitMode'),
+    watchedAmount,
+    watchedSplitMode,
+    form,
+    groupCurrency.decimal_digits,
   ])
 
   const [usingCustomConversionRate, setUsingCustomConversionRate] = useState(
@@ -399,10 +404,14 @@ export function ExpenseForm({
     if (!usingCustomConversionRate && exchangeRate.data) {
       form.setValue('conversionRate', exchangeRate.data)
     }
-  }, [exchangeRate.data, usingCustomConversionRate])
+  }, [exchangeRate.data, usingCustomConversionRate, form])
+
+  const watchedOriginalAmount = form.watch('originalAmount')
+  const watchedConversionRate = form.watch('conversionRate')
+  const isOriginalAmountTouched = form.getFieldState('originalAmount').isTouched
 
   useEffect(() => {
-    if (!form.getFieldState('originalAmount').isTouched) return
+    if (!isOriginalAmountTouched) return
     const originalAmount = form.getValues('originalAmount') ?? 0
     const conversionRate = form.getValues('conversionRate')
 
@@ -420,9 +429,9 @@ export function ExpenseForm({
       }
     }
   }, [
-    form.watch('originalAmount'),
-    form.watch('conversionRate'),
-    form.getFieldState('originalAmount').isTouched,
+    watchedOriginalAmount,
+    watchedConversionRate,
+    isOriginalAmountTouched,
   ])
 
   let conversionRateMessage = ''

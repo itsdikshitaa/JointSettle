@@ -41,7 +41,7 @@ export function CurrencySelector({
   useEffect(() => {
     setValue(defaultValue)
     onValueChange(defaultValue)
-  }, [defaultValue])
+  }, [defaultValue, onValueChange])
 
   const selectedCurrency =
     currencies.find((currency) => (currency.code ?? '') === value) ??
@@ -190,6 +190,7 @@ function CurrencyLabel({ currency }: { currency: Currency }) {
   }.png`
   return (
     <div className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={flagUrl} className="w-4" alt="" />
       {currency.name}
       {currency.code ? ` (${currency.code})` : ''}

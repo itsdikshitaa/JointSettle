@@ -43,6 +43,7 @@ model Participant {
   leftAt          DateTime?
   expensesPaidBy  Expense[]
   expensesPaidFor ExpensePaidFor[]
+  leaveRequests   LeaveRequest[]
 }
 
 model Category {
@@ -136,6 +137,19 @@ model Activity {
   participantId String?
   expenseId     String?
   data          String?
+}
+
+model LeaveRequest {
+  id            String   @id
+  groupId       String
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  status        String   @default("pending") // "pending", "approved", "rejected"
+  createdAt     DateTime @default(now())
+  resolvedAt    DateTime?
+
+  @@index([groupId])
+  @@index([participantId])
 }
 
 model ImportLog {

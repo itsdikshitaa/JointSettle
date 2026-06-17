@@ -52,7 +52,10 @@ export function StatsCharts() {
     { groupId, hash: hash!, limit: 500 },
     { getNextPageParam: ({ nextCursor }) => nextCursor },
   )
-  const allExpenses = expensesPages?.pages.flatMap((p) => p.expenses) ?? []
+  const allExpenses = useMemo(
+    () => expensesPages?.pages.flatMap((p) => p.expenses) ?? [],
+    [expensesPages],
+  )
 
   const nonReimbursement = useMemo(
     () => allExpenses.filter((e) => !e.isReimbursement),
