@@ -150,7 +150,7 @@ const FormMessage = React.forwardRef<
   let body
   if (error) {
     body = String(error?.message)
-    const translation = (messages.SchemaErrors as any)[body]
+    const translation = (messages.SchemaErrors as any)?.[body]
     if (translation) {
       body = translation
     }

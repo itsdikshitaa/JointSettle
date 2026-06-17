@@ -188,7 +188,8 @@
     "NameField": {
       "label": "Group name",
       "placeholder": "Trip to Paris, Roommates, ...",
-      "description": "Give your group a descriptive name."
+      "description": "Give your group a descriptive name.",
+      "duplicateError": "A group with this name already exists"
     },
     "CurrencyCodeField": {
       "label": "Currency",

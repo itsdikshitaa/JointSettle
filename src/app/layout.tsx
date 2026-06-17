@@ -206,7 +206,6 @@ export default async function RootLayout({
   const messages = await getMessages()
   return (
     <html lang={locale} suppressHydrationWarning className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
-      <script async suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('[bis_skin_checked]').forEach(e=>e.removeAttribute('bis_skin_checked'))})` }} />
       {env.PLAUSIBLE_DOMAIN && (
         <PlausibleProvider
           domain={env.PLAUSIBLE_DOMAIN}
@@ -217,6 +216,7 @@ export default async function RootLayout({
       <AxiomWebVitals />
       <ApplePwaSplash icon="/logo-with-text.png" color="#2563EB" />
       <body className="min-h-[100dvh] flex flex-col items-stretch bg-background font-sans" suppressHydrationWarning>
+        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('[bis_skin_checked]').forEach(e=>e.removeAttribute('bis_skin_checked'))})` }} />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

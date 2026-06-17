@@ -18,6 +18,18 @@ export async function createGroup(groupFormValues: GroupFormValues, hash: string
   if (!user) {
     throw new Error('User not found')
   }
+
+  // Prevent duplicate group names under the same account
+  const existingGroup = await prisma.group.findFirst({
+    where: {
+      userId: user.id,
+      name: { equals: groupFormValues.name, mode: 'insensitive' },
+    },
+  })
+  if (existingGroup) {
+    throw new Error('A group with this name already exists')
+  }
+
   return prisma.group.create({
     data: {
       id: randomId(),
@@ -321,6 +333,20 @@ export async function updateGroup(
 ) {
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
+
+  // Prevent renaming to a name that already exists under this account
+  if (groupFormValues.name !== existingGroup.name) {
+    const duplicateGroup = await prisma.group.findFirst({
+      where: {
+        userId: existingGroup.userId,
+        name: { equals: groupFormValues.name, mode: 'insensitive' },
+        id: { not: groupId },
+      },
+    })
+    if (duplicateGroup) {
+      throw new Error('A group with this name already exists')
+    }
+  }
 
   await logActivity(groupId, ActivityType.UPDATE_GROUP, { participantId })
 

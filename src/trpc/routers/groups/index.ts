@@ -12,6 +12,7 @@ import { joinGroupProcedure } from './join.procedure'
 import { leaveGroupProcedure } from './leave.procedure'
 import { listByUserProcedure } from './listByUser.procedure'
 import { listGroupsProcedure } from './list.procedure'
+import { checkNameProcedure } from './checkName.procedure'
 
 export const groupsRouter = createTRPCRouter({
   expenses: groupExpensesRouter,
@@ -28,4 +29,5 @@ export const groupsRouter = createTRPCRouter({
   leave: leaveGroupProcedure,
   create: createGroupProcedure,
   update: updateGroupProcedure,
+  checkName: checkNameProcedure,
 })

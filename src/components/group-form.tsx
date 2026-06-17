@@ -37,13 +37,17 @@ import { defaultCurrencyList, getCurrency } from '@/lib/currency'
 import { getNamesForCurrency } from '@/lib/country-names'
 import { GroupFormValues, groupFormSchema } from '@/lib/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Save, Trash2 } from 'lucide-react'
+import { Save, SearchX, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
+import { useDebounce } from 'use-debounce'
 import { CurrencySelector } from './currency-selector'
 import { Textarea } from './ui/textarea'
+import { useAuth } from './auth-provider'
+import { trpc } from '@/trpc/client'
+import { cn } from '@/lib/utils'
 
 export type Props = {
   group?: NonNullable<Awaited<ReturnType<typeof getGroup>>>
@@ -94,6 +98,40 @@ export function GroupForm({
     () => getNamesForCurrency(watchedCurrencyCode),
     [watchedCurrencyCode],
   )
+  const { hash } = useAuth()
+  const trpcUtils = trpc.useUtils()
+
+  // Real-time group name availability
+  const watchedName = form.watch('name')
+  const [debouncedName] = useDebounce(watchedName, 400)
+  const [nameError, setNameError] = useState<string | null>(null)
+  const nameCheck = trpc.groups.checkName.useQuery(
+    { hash: hash!, name: debouncedName, excludeGroupId: group?.id },
+    {
+      enabled:
+        !!hash &&
+        debouncedName.trim().length >= 2 &&
+        debouncedName !== (group?.name ?? ''),
+      retry: false,
+    },
+  )
+  useEffect(() => {
+    let cancelled = false
+    if (nameCheck.data && !nameCheck.data.available) {
+      if (!cancelled) setNameError(t('NameField.duplicateError'))
+    } else {
+      if (!cancelled) setNameError(null)
+    }
+    return () => { cancelled = true }
+  }, [nameCheck.data, t])
+  // Clear error when name becomes too short or matches current group name
+  useEffect(() => {
+    if (debouncedName.trim().length < 2 || debouncedName === (group?.name ?? '')) {
+      setNameError(null)
+    }
+  }, [debouncedName, group?.name])
+
+  const [activeUserError, setActiveUserError] = useState<string | null>(null)
   const sendEvent = useAnalytics()
 
   const [activeUser, setActiveUser] = useState<string | null>(null)
@@ -102,13 +140,15 @@ export function GroupForm({
       const currentActiveUser =
         fields.find(
           (f) => f.id === localStorage.getItem(`${group?.id}-activeUser`),
-        )?.name || (group ? t('Settings.ActiveUserField.none') : (fields.length > 0 ? fields[0].name : ''))
+        )?.name || ''
       setActiveUser(currentActiveUser)
     }
   }, [t, activeUser, fields, group?.id])
 
+  const isNameSelected = activeUser && activeUser.trim().length > 0
+
   const updateActiveUser = () => {
-    if (!activeUser) return
+    if (!isNameSelected) return
     if (group?.id) {
       const participant = group.participants.find((p) => p.name === activeUser)
       if (participant?.id) {
@@ -125,6 +165,11 @@ export function GroupForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (values) => {
+          if (!isNameSelected) {
+            setActiveUserError(t('Settings.ActiveUserField.placeholder'))
+            return
+          }
+          setActiveUserError(null)
           if (group) {
             sendEvent(
               { event: 'group: update', props: { groupId: group.id } },
@@ -153,11 +198,17 @@ export function GroupForm({
                   <FormLabel>{t('NameField.label')}</FormLabel>
                   <FormControl>
                     <Input
-                      className="text-base"
+                      className={cn('text-base', nameError && 'border-destructive')}
                       placeholder={t('NameField.placeholder')}
                       {...field}
                     />
                   </FormControl>
+                  {nameError && (
+                    <p className="text-sm font-medium text-destructive flex items-center gap-1.5">
+                      <SearchX className="w-3.5 h-3.5" />
+                      {nameError}
+                    </p>
+                  )}
                   <FormDescription>
                     {t('NameField.description')}
                   </FormDescription>
@@ -346,10 +397,11 @@ export function GroupForm({
                     <Select
                       onValueChange={(value) => {
                         setActiveUser(value)
+                        setActiveUserError(null)
                       }}
-                      defaultValue={activeUser}
+                      value={activeUser}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={activeUserError ? 'border-destructive' : ''}>
                         <SelectValue
                           placeholder={t(
                             'Settings.ActiveUserField.placeholder',
@@ -357,13 +409,8 @@ export function GroupForm({
                         />
                       </SelectTrigger>
                       <SelectContent>
-                        {[
-                          ...(group
-                            ? [{ name: t('Settings.ActiveUserField.none') }]
-                            : []),
-                          ...form.watch('participants'),
-                        ]
-                          .filter((item) => item.name.length > 0)
+                        {form.watch('participants')
+                          .filter((item) => item.name.trim().length > 0)
                           .map(({ name }) => (
                             <SelectItem key={name} value={name}>
                               {name}
@@ -372,6 +419,11 @@ export function GroupForm({
                       </SelectContent>
                     </Select>
                   </FormControl>
+                  {activeUserError && (
+                    <p className="text-sm font-medium text-destructive">
+                      {activeUserError}
+                    </p>
+                  )}
                   <FormDescription>
                     {t('Settings.ActiveUserField.description')}
                   </FormDescription>
