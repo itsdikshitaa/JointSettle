@@ -34,12 +34,13 @@ import {
 import { Locale } from '@/i18n/request'
 import { getGroup } from '@/lib/api'
 import { defaultCurrencyList, getCurrency } from '@/lib/currency'
+import { getNamesForCurrency } from '@/lib/country-names'
 import { GroupFormValues, groupFormSchema } from '@/lib/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Save, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { CurrencySelector } from './currency-selector'
 import { Textarea } from './ui/textarea'
@@ -86,6 +87,13 @@ export function GroupForm({
     name: 'participants',
     keyName: 'key',
   })
+
+  // Reactively swap participant name placeholders when currency changes
+  const watchedCurrencyCode = form.watch('currencyCode')
+  const currencyNames = useMemo(
+    () => getNamesForCurrency(watchedCurrencyCode),
+    [watchedCurrencyCode],
+  )
   const sendEvent = useAnalytics()
 
   const [activeUser, setActiveUser] = useState<string | null>(null)
@@ -250,8 +258,7 @@ export function GroupForm({
           <CardContent>
             <ul className="flex flex-col gap-2">
               {fields.map((item, index) => {
-                const placeholders = [t('Participants.John'), t('Participants.Jane'), t('Participants.Jack')]
-                const placeholder = index < placeholders.length ? placeholders[index] : t('Participants.new')
+                const placeholder = index < currencyNames.length ? currencyNames[index] : t('Participants.new')
                 return (
                 <li key={item.key}>
                   <FormField

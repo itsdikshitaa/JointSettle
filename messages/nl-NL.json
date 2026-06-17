@@ -208,12 +208,14 @@
     "Participants": {
       "title": "Participants",
       "description": "Add the people who will be splitting expenses.",
-      "John": "Alice",
-      "Jane": "Bob",
-      "Jack": "Charlie",
       "new": "New participant",
       "protectedParticipant": "This participant has expenses and cannot be removed.",
-      "add": "Add participant"
+      "add": "Add participant",
+      "name4": "Sophie",
+      "name5": "Lukas",
+      "name1": "Sem",
+      "name2": "Lotte",
+      "name3": "Daan"
     },
     "Settings": {
       "title": "Your Profile",

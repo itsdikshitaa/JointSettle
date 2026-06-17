@@ -206,6 +206,7 @@ export default async function RootLayout({
   const messages = await getMessages()
   return (
     <html lang={locale} suppressHydrationWarning className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
+      <script async suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('[bis_skin_checked]').forEach(e=>e.removeAttribute('bis_skin_checked'))})` }} />
       {env.PLAUSIBLE_DOMAIN && (
         <PlausibleProvider
           domain={env.PLAUSIBLE_DOMAIN}
