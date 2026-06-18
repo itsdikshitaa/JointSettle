@@ -53,3 +53,11 @@ export async function verifyGroupOwnership(hash: string, groupId: string): Promi
   })
   return group !== null
 }
+
+export async function verifyGroupMembership(groupId: string, participantId?: string): Promise<boolean> {
+  if (!participantId) return false
+  const participant = await prisma.participant.findFirst({
+    where: { id: participantId, groupId, leftAt: null },
+  })
+  return participant !== null
+}

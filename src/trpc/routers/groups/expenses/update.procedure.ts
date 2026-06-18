@@ -1,5 +1,5 @@
 import { updateExpense } from '@/lib/api'
-import { verifyUserAuthenticated } from '@/lib/auth'
+import { verifyUserAuthenticated, verifyGroupMembership } from '@/lib/auth'
 import { expenseFormSchema } from '@/lib/schemas'
 import { baseProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
@@ -23,6 +23,15 @@ export const updateGroupExpenseProcedure = baseProcedure
       if (!isAuthenticated) {
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Authentication required' })
       }
+
+      // Verify the participant is a member of the group
+      if (participantId) {
+        const isMember = await verifyGroupMembership(groupId, participantId)
+        if (!isMember) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not a member of this group' })
+        }
+      }
+
       const expense = await updateExpense(
         groupId,
         expenseId,
