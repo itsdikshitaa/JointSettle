@@ -76,8 +76,8 @@ export function JoinGroupButton() {
         name: name.trim(),
       })
       setRequestSent(true)
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit join request')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit join request')
     }
   }
 

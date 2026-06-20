@@ -171,7 +171,11 @@ export async function getGroups(groupIds: string[]) {
   return (
     await prisma.group.findMany({
       where: { id: { in: groupIds } },
-      include: { _count: { select: { participants: true } } },
+      include: {
+        _count: {
+          select: { participants: { where: { leftAt: null } } },
+        },
+      },
     })
   ).map((group) => ({
     ...group,
@@ -185,7 +189,11 @@ export async function getUserGroups(hash: string) {
   return (
     await prisma.group.findMany({
       where: { userId: user.id },
-      include: { _count: { select: { participants: true } } },
+      include: {
+        _count: {
+          select: { participants: { where: { leftAt: null } } },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     })
   ).map((group) => ({
@@ -393,7 +401,7 @@ export async function updateGroup(
 export async function getGroup(groupId: string) {
   return prisma.group.findUnique({
     where: { id: groupId },
-    include: { participants: true },
+    include: { participants: { where: { leftAt: null } } },
   })
 }
 

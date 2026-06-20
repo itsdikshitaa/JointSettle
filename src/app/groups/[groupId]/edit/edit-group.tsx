@@ -76,9 +76,9 @@ export const EditGroup = () => {
       toast({ description: dt('toastSuccess') })
       await utils.groups.invalidate()
       router.push('/groups')
-    } catch (err: any) {
+    } catch (err) {
       toast({
-        description: err.message || dt('toastError'),
+        description: err instanceof Error ? err.message : dt('toastError'),
         variant: 'destructive',
       })
     }
@@ -90,8 +90,8 @@ export const EditGroup = () => {
       toast({ description: lt('approveSuccess') })
       await refetchRequests()
       await utils.groups.invalidate()
-    } catch (err: any) {
-      toast({ description: err.message || lt('approveError'), variant: 'destructive' })
+    } catch (err) {
+      toast({ description: err instanceof Error ? err.message : lt('approveError'), variant: 'destructive' })
     }
   }
 
@@ -100,8 +100,8 @@ export const EditGroup = () => {
       await rejectRequest({ groupId, hash: hash!, requestId })
       toast({ description: lt('rejectSuccess') })
       await refetchRequests()
-    } catch (err: any) {
-      toast({ description: err.message || lt('rejectError'), variant: 'destructive' })
+    } catch (err) {
+      toast({ description: err instanceof Error ? err.message : lt('rejectError'), variant: 'destructive' })
     }
   }
 
@@ -111,8 +111,8 @@ export const EditGroup = () => {
       toast({ description: jt('approveSuccess') })
       await refetchJoinRequests()
       await utils.groups.invalidate()
-    } catch (err: any) {
-      toast({ description: err.message || jt('approveError'), variant: 'destructive' })
+    } catch (err) {
+      toast({ description: err instanceof Error ? err.message : jt('approveError'), variant: 'destructive' })
     }
   }
 
@@ -121,19 +121,19 @@ export const EditGroup = () => {
       await rejectJoinRequest({ groupId, hash: hash!, requestId })
       toast({ description: jt('rejectSuccess') })
       await refetchJoinRequests()
-    } catch (err: any) {
-      toast({ description: err.message || jt('rejectError'), variant: 'destructive' })
+    } catch (err) {
+      toast({ description: err instanceof Error ? err.message : jt('rejectError'), variant: 'destructive' })
     }
   }
 
   const pendingRequests = leaveRequestsData?.requests.filter(
-    (r: any) => r.status === 'pending'
+    (r) => r.status === 'pending'
   ) ?? []
   const resolvedRequests = leaveRequestsData?.requests.filter(
-    (r: any) => r.status !== 'pending'
+    (r) => r.status !== 'pending'
   ) ?? []
   const pendingJoinRequests = joinRequestsData?.requests.filter(
-    (r: any) => r.status === 'pending'
+    (r) => r.status === 'pending'
   ) ?? []
 
   return (
@@ -182,7 +182,7 @@ export const EditGroup = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              {pendingRequests.map((request: any) => (
+              {pendingRequests.map((request) => (
                 <div
                   key={request.id}
                   className="flex items-center justify-between gap-3 rounded-lg border border-amber-200/30 dark:border-amber-800/30 bg-amber-50/30 dark:bg-amber-950/10 p-3"
@@ -245,7 +245,7 @@ export const EditGroup = () => {
                 {lt('resolvedHistory', { count: resolvedRequests.length })}
               </summary>
               <div className="mt-2 space-y-1.5">
-                {resolvedRequests.map((request: any) => (
+                {resolvedRequests.map((request) => (
                   <div
                     key={request.id}
                     className="flex items-center gap-2 text-xs text-muted-foreground px-2 py-1"
@@ -288,7 +288,7 @@ export const EditGroup = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              {pendingJoinRequests.map((request: any) => (
+              {pendingJoinRequests.map((request) => (
                 <div
                   key={request.id}
                   className="flex items-center justify-between gap-3 rounded-lg border border-blue-200/30 dark:border-blue-800/30 bg-blue-50/30 dark:bg-blue-950/10 p-3"

@@ -3,6 +3,7 @@ import { TrackPage } from '@/components/track-page'
 import { Button } from '@/components/ui/button'
 import { basehub } from 'basehub'
 import { RichText } from 'basehub/react-rich-text'
+import type { BlogIndexMetadata, BlogPostSummary } from '@/lib/blog-types'
 import { ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
@@ -15,16 +16,16 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: { title: true, subtitle: { plainText: true } },
-    })) as any
+    })) as { blogIndex: BlogIndexMetadata }
 
     return {
       title: {
         absolute: `${blogIndex.title} · ${blogIndex.subtitle?.plainText}`,
       },
-      description: blogIndex.subtitle?.plainText,
+      description: blogIndex.subtitle?.plainText ?? undefined,
       openGraph: {
         title: blogIndex.title ?? '',
-        description: blogIndex.subtitle?.plainText,
+        description: blogIndex.subtitle?.plainText ?? undefined,
         images: `/banner.png`,
         type: 'website',
         url: `/blog`,
@@ -35,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
         site: '@scastiel',
         images: `/banner.png`,
         title: blogIndex.title ?? '',
-        description: blogIndex.subtitle?.plainText,
+        description: blogIndex.subtitle?.plainText ?? undefined,
       },
     }
   } catch {
@@ -57,15 +58,15 @@ export default async function BlogPage() {
         <RichText>{blogIndex.subtitle?.json.content}</RichText>
       </div>
       <ul className="grid gap-4">
-        {blogIndex.blogPosts.items.map((post: any) => (
+        {blogIndex.blogPosts.items.map((post: BlogPostSummary) => (
           <li key={post._id} className="border-t py-6 flex gap-4 items-start">
             <div className="flex-1">
               <div className="text-muted-foreground text-sm mb-2">
-                {formatDate(post.date as string)}
+                {formatDate(post.date ?? '')}
               </div>
               <h2
                 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3"
-                style={{ textWrap: 'balance' } as any}
+                style={{ textWrap: 'balance' }}
               >
                 <Link href={`/blog/${post._slug}`}>{post._title}</Link>
               </h2>

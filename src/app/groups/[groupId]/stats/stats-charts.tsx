@@ -29,12 +29,12 @@ const CHART_COLORS = [
   '#6366F1', '#A855F7', '#D946EF', '#FB7185', '#FBBF24',
 ]
 
-function CustomTooltip({ active, payload, label }: any) {
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
   if (!active || !payload?.length) return null
   return (
     <div className="rounded-lg border border-blue-100/30 dark:border-blue-900/20 bg-white/80 dark:bg-blue-950/80 backdrop-blur-sm px-3 py-2 text-sm shadow-lg">
       <p className="font-medium text-foreground">{label || payload[0].name}</p>
-      {payload.map((entry: any, i: number) => (
+      {payload.map((entry, i: number) => (
         <p key={i} style={{ color: entry.color }} className="tabular-nums">
           {entry.name}: {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
         </p>

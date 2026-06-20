@@ -29,7 +29,7 @@ export const getGroupProcedure = baseProcedure
 
     const group = await prisma.group.findUnique({
       where: { id: groupId },
-      include: { participants: true },
+      include: { participants: { where: { leftAt: null } } },
     })
 
     return { group, isOwner }

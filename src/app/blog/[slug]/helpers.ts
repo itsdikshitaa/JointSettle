@@ -1,4 +1,5 @@
 import { basehub } from 'basehub'
+import type { BlogPost, BlogPostSummary, BlogPostSitemap, BlogIndexLanding } from '@/lib/blog-types'
 
 export async function getPostBySlug(slug: string) {
   try {
@@ -20,7 +21,7 @@ export async function getPostBySlug(slug: string) {
           },
         },
       },
-    })) as any
+    })) as { blogIndex: { blogPosts: { items: BlogPost[] } } }
 
     return blogIndex.blogPosts.items.at(0)
   } catch {
@@ -44,7 +45,7 @@ export async function getPosts() {
           items: { _slug: true, _sys: { lastModifiedAt: true } },
         },
       },
-    })) as any
+    })) as { blogIndex: { blogPosts: { items: BlogPostSitemap[] } } }
     const { blogPosts } = blogIndex
     return blogPosts.items
   } catch {
@@ -52,7 +53,7 @@ export async function getPosts() {
   }
 }
 
-export async function getBlogIndexWithPosts() {
+export async function getBlogIndexWithPosts(): Promise<BlogIndexLanding> {
   try {
     const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: {
@@ -74,7 +75,7 @@ export async function getBlogIndexWithPosts() {
           },
         },
       },
-    })) as any
+    })) as { blogIndex: BlogIndexLanding }
     return blogIndex
   } catch {
     return {

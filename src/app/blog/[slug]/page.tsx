@@ -29,7 +29,7 @@ export async function generateMetadata({
 
   return {
     title: post._title,
-    description: post.subtitle,
+    description: post.subtitle ?? undefined,
     openGraph: {
       title: post._title,
       description: post.subtitle ?? '',
@@ -63,12 +63,12 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
       </div>
       <h1
         className="mt-4 mb-2 text-3xl sm:text-6xl font-bold"
-        style={{ textWrap: 'balance' } as any}
+        style={{ textWrap: 'balance' }}
       >
         <Link href={`/blog/${slug}`}>{post._title}</Link>
       </h1>
       <div className="text-muted-foreground flex gap-2 items-center mb-4 text-sm sm:text-base">
-        <span>{formatDate(post.date as string)}</span>
+        <span>{formatDate(post.date ?? '')}</span>
         <span>·</span>
         {post.author && (
           <AuthorNameAvatar
@@ -127,7 +127,7 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
             />
           </>
         )}{' '}
-        on <span>{formatDate(post.date as string)}.</span>
+        on <span>{formatDate(post.date ?? '')}.</span>
       </div>
     </>
   )

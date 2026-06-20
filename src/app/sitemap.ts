@@ -1,4 +1,5 @@
 import { getPosts } from '@/app/blog/[slug]/helpers'
+import type { BlogPostSitemap } from '@/lib/blog-types'
 import { env } from '@/lib/env'
 import { MetadataRoute } from 'next'
 
@@ -24,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     ...posts.map(
-      (post: any) =>
+      (post: BlogPostSitemap) =>
         ({
           url: `${env.NEXT_PUBLIC_BASE_URL}/blog/${post._slug}`,
           lastModified: new Date(post._sys.lastModifiedAt),

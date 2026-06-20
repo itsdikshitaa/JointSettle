@@ -8,7 +8,7 @@ export async function Contributors() {
   }
 
   return (
-    <ul style={{ textWrap: 'balance' } as any}>
+    <ul style={{ textWrap: 'balance' }}>
       {contributors.map((contributor) =>
         contributor.avatar_url !== undefined &&
         contributor.login !== undefined ? (

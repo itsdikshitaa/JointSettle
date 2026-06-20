@@ -1,4 +1,5 @@
 import { basehub } from 'basehub'
+import type { BlogIndexMetadata } from '@/lib/blog-types'
 import { Metadata } from 'next'
 import { PropsWithChildren } from 'react'
 
@@ -6,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const { blogIndex } = (await basehub({ next: { revalidate: 60 } }).query({
       blogIndex: { title: true, subtitle: { plainText: true } },
-    })) as any
+    })) as { blogIndex: BlogIndexMetadata }
 
     return {
       title: {

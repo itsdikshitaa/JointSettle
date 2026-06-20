@@ -48,8 +48,8 @@ export function LeaveGroupButton() {
 
       setRequested(true)
       await utils.groups.invalidate()
-    } catch (err: any) {
-      toast({ description: err.message || t('requestError'), variant: 'destructive' })
+    } catch (err) {
+      toast({ description: err instanceof Error ? err.message : t('requestError'), variant: 'destructive' })
     }
   }
 

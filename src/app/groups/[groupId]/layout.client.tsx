@@ -56,11 +56,9 @@ export function GroupLayoutClient({
     )
   }
 
-  const isOwner = (data as any)?.isOwner ?? false
-
   // Success - group data is available
   return (
-    <CurrentGroupProvider isLoading={false} groupId={groupId} group={data.group} isOwner={isOwner}>
+    <CurrentGroupProvider isLoading={false} groupId={groupId} group={data.group} isOwner={data.isOwner}>
       <GroupHeader />
       {children}
     </CurrentGroupProvider>

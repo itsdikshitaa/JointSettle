@@ -76,7 +76,7 @@ export function ImportCsvButton() {
     if (!csvContent) return
 
     try {
-      const res: any = await importCsv({
+      const res = await importCsv({
         groupId,
         hash: hash!,
         csvContent,
@@ -84,12 +84,12 @@ export function ImportCsvButton() {
       })
 
       // Check if the response requires date format resolution
-      if (res.requiresDateFormat && res.ambiguousDates) {
+      if ('requiresDateFormat' in res && res.requiresDateFormat) {
         setAmbiguousDates(res.ambiguousDates)
         return
       }
 
-      const typedResult = res as ImportResult
+      const typedResult = res
       setResult(typedResult)
       if (typedResult.success > 0) {
         await utils.groups.expenses.invalidate()
@@ -99,9 +99,9 @@ export function ImportCsvButton() {
           description: t('toastSuccess', { count: typedResult.success }),
         })
       }
-    } catch (err: any) {
+    } catch (err) {
       toast({
-        description: err.message || t('toastError'),
+        description: err instanceof Error ? err.message : t('toastError'),
         variant: 'destructive',
       })
     }

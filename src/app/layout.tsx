@@ -1,5 +1,6 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
 import { getBlogIndexWithPosts } from '@/app/blog/[slug]/helpers'
+import type { BlogPostSummary } from '@/lib/blog-types'
 import { FeedbackModal } from '@/components/feedback-button/feedback-button'
 import { Nav } from '@/components/nav'
 import { ProgressBar } from '@/components/progress-bar'
@@ -239,7 +240,7 @@ async function BlogPostsList() {
   const blogIndex = await getBlogIndexWithPosts()
   return (
     <ul>
-      {blogIndex.blogPosts.items.map((post: any) => (
+      {blogIndex.blogPosts.items.map((post: BlogPostSummary) => (
         <li key={post._id}>
           <Button variant="link" asChild size="sm" className="-ml-3 h-7">
             <Link

@@ -103,7 +103,7 @@ export default async function OGImage({
           )}
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <img src={logoImageData as any} width={300} alt="" />
+            <img src={logoImageData as unknown as string} width={300} alt="" />
           </div>
         </div>
       </div>
