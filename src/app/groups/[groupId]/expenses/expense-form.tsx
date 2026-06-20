@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/incompatible-library */
+// react-compiler: React Hook Form's watch() returns unstable function refs, cannot optimize
 import { CategorySelector } from '@/components/category-selector'
 import { CurrencySelector } from '@/components/currency-selector'
 import { ExpenseDocumentsInput } from '@/components/expense-documents-input'
@@ -432,6 +434,8 @@ export function ExpenseForm({
     watchedOriginalAmount,
     watchedConversionRate,
     isOriginalAmountTouched,
+    form,
+    groupCurrency.decimal_digits,
   ])
 
   let conversionRateMessage = ''

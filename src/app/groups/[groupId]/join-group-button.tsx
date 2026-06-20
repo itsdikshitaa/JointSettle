@@ -44,13 +44,14 @@ export function JoinGroupButton() {
 
   const { mutateAsync: requestJoin, isPending } = trpc.groups.joinRequests.request.useMutation()
 
-  if (!group) return null
-
   // Only show participants who haven't left — these are "claimable" by new joiners
+  // Note: useMemo is called before the early return to comply with hooks rules
   const availableParticipants = useMemo(
-    () => group.participants.filter((p) => !p.leftAt),
-    [group.participants],
+    () => group?.participants?.filter((p) => !p.leftAt) ?? [],
+    [group?.participants],
   )
+
+  if (!group) return null
 
   const handleSelectParticipant = async (participantId: string) => {
     localStorage.setItem(`${groupId}-activeUser`, participantId)

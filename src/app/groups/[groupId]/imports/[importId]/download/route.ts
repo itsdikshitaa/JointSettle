@@ -16,7 +16,6 @@ export async function GET(
   }
 
   // Parse the stored data for full details
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let parsedData: any = {}
   if (log.data) {
     try {
