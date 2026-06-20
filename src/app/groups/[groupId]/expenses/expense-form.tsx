@@ -1353,6 +1353,6 @@ export function ExpenseForm({
 }
 
 function formatDate(date?: Date) {
-  if (!date || isNaN(date as any)) date = new Date()
+  if (!date || Number.isNaN(date.getTime())) date = new Date()
   return date.toISOString().substring(0, 10)
 }
