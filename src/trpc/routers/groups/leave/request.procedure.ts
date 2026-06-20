@@ -1,4 +1,4 @@
-import { verifyUserAuthenticated } from '@/lib/auth'
+import { verifyParticipantOwnership } from '@/lib/auth'
 import { randomId } from '@/lib/api'
 import { prisma } from '@/lib/prisma'
 import { baseProcedure } from '@/trpc/init'
@@ -14,9 +14,13 @@ export const requestLeaveProcedure = baseProcedure
     }),
   )
   .mutation(async ({ input: { groupId, hash, participantId } }) => {
-    const isAuthenticated = await verifyUserAuthenticated(hash)
-    if (!isAuthenticated) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Authentication required' })
+    // Verify the participant belongs to this user via the hash field
+    const ownsParticipant = await verifyParticipantOwnership(participantId, hash)
+    if (!ownsParticipant) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You are not authorized to request leave for this participant.',
+      })
     }
 
     // Check participant exists in the group
@@ -38,7 +42,7 @@ export const requestLeaveProcedure = baseProcedure
     if (existingPending) {
       throw new TRPCError({
         code: 'CONFLICT',
-        message: 'You already have a pending leave request.',
+        message: 'A pending leave request already exists for this participant.',
       })
     }
 

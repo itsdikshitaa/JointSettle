@@ -1,5 +1,5 @@
 import { updateExpense } from '@/lib/api'
-import { verifyUserAuthenticated, verifyGroupMembership } from '@/lib/auth'
+import { verifyUserAuthenticated, verifyGroupOwnership, verifyParticipantOwnership, verifyGroupMembership } from '@/lib/auth'
 import { expenseFormSchema } from '@/lib/schemas'
 import { baseProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
@@ -24,12 +24,17 @@ export const updateGroupExpenseProcedure = baseProcedure
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Authentication required' })
       }
 
-      // Verify the participant is a member of the group
-      if (participantId) {
-        const isMember = await verifyGroupMembership(groupId, participantId)
-        if (!isMember) {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not a member of this group' })
-        }
+      // Caller must be either the group owner or own the participant identity
+      const isOwner = await verifyGroupOwnership(hash, groupId)
+      const ownsParticipant = participantId
+        ? await verifyParticipantOwnership(participantId, hash)
+        : false
+      // Backward compatibility: if participant has no hash, fall back to membership check
+      const isMember = !isOwner && !ownsParticipant && participantId
+        ? await verifyGroupMembership(groupId, participantId)
+        : false
+      if (!isOwner && !ownsParticipant && !isMember) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not authorized to update expenses in this group' })
       }
 
       const expense = await updateExpense(

@@ -1,5 +1,5 @@
 import { logActivity, randomId } from '@/lib/api'
-import { verifyUserAuthenticated } from '@/lib/auth'
+import { verifyUserAuthenticated, verifyGroupOwnership, verifyGroupMembership } from '@/lib/auth'
 import { getCurrency } from '@/lib/currency'
 import { prisma } from '@/lib/prisma'
 import { baseProcedure } from '@/trpc/init'
@@ -683,17 +683,28 @@ export const importCsvExpensesProcedure = baseProcedure
       hash: z.string().length(8),
       csvContent: z.string().min(1),
       preferredDateFormat: z.enum(['dd/mm', 'mm/dd']).optional(),
+      participantId: z.string().optional(),
     }),
   )
   .mutation(
     async ({
-      input: { groupId, hash, csvContent, preferredDateFormat },
+      input: { groupId, hash, csvContent, preferredDateFormat, participantId },
     }) => {
       const isAuthenticated = await verifyUserAuthenticated(hash)
       if (!isAuthenticated) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Authentication required',
+        })
+      }
+
+      // Caller must be either the group owner or a participant
+      const isOwner = await verifyGroupOwnership(hash, groupId)
+      const isParticipant = await verifyGroupMembership(groupId, participantId)
+      if (!isOwner && !isParticipant) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You do not have access to this group',
         })
       }
 

@@ -12,10 +12,11 @@ datasource db {
 }
 
 model User {
-  id        String   @id
-  hash      String   @unique
-  createdAt DateTime @default(now())
-  groups    Group[]
+  id           String        @id
+  hash         String        @unique
+  createdAt    DateTime      @default(now())
+  groups       Group[]
+  participants Participant[]
 }
 
 model Group {
@@ -38,6 +39,7 @@ model Group {
 model Participant {
   id              String           @id
   name            String
+  hash            String?
   group           Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         String
   joinedAt        DateTime         @default(now())
@@ -45,6 +47,9 @@ model Participant {
   expensesPaidBy  Expense[]
   expensesPaidFor ExpensePaidFor[]
   leaveRequests   LeaveRequest[]
+  user            User?            @relation(fields: [hash], references: [hash])
+
+  @@index([hash])
 }
 
 model Category {

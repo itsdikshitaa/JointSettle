@@ -35,12 +35,13 @@ export const approveJoinProcedure = baseProcedure
       })
     }
 
-    // Create the participant and mark request as approved
+    // Create the participant (with hash linking to user) and mark request as approved
     await prisma.$transaction([
       prisma.participant.create({
         data: {
           id: randomId(),
           name: joinRequest.name,
+          hash: joinRequest.hash,
           groupId,
           joinedAt: new Date(),
         },

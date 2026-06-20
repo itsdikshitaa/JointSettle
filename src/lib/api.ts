@@ -47,9 +47,10 @@ export async function createGroup(groupFormValues: GroupFormValues, hash: string
             if (validParticipants.length === 0) {
               throw new Error('At least one participant with a valid name is required')
             }
-            return validParticipants.map(({ name }) => ({
+            return validParticipants.map(({ name }, index) => ({
               id: randomId(),
               name,
+              hash: index === 0 ? user.hash : undefined,
               joinedAt: new Date(),
             }))
           })(),
@@ -363,7 +364,7 @@ export async function updateGroup(
           ...groupFormValues.participants
             .filter((participant) => participant.id !== undefined)
             .map((participant) => ({
-              where: { id: participant.id },
+              where: { id: participant.id, groupId },
               data: {
                 name: participant.name,
               },
@@ -371,7 +372,7 @@ export async function updateGroup(
           ...existingGroup.participants
             .filter((p) => !groupFormValues.participants.some((p2) => p2.id === p.id))
             .map((p) => ({
-              where: { id: p.id, leftAt: null },
+              where: { id: p.id, groupId, leftAt: null },
               data: { leftAt: new Date() },
             })),
         ],
@@ -404,7 +405,7 @@ export async function getGroupExpenses(
   groupId: string,
   options?: { offset?: number; length?: number; filter?: string },
 ) {
-  await createRecurringExpenses()
+  await createRecurringExpenses(groupId)
 
   return prisma.expense.findMany({
     select: {
@@ -439,6 +440,8 @@ export async function getGroupExpenses(
 }
 
 export async function getGroupExpenseCount(groupId: string) {
+  // Ensure recurring expenses are up to date before counting
+  await createRecurringExpenses(groupId)
   return prisma.expense.count({ where: { groupId } })
 }
 
@@ -500,7 +503,7 @@ export async function logActivity(
   })
 }
 
-async function createRecurringExpenses() {
+async function createRecurringExpenses(groupId?: string) {
   const localDate = new Date() // Current local date
   const utcDateFromLocal = new Date(
     Date.UTC(
@@ -520,12 +523,19 @@ async function createRecurringExpenses() {
         nextExpenseDate: {
           lte: utcDateFromLocal,
         },
+        ...(groupId ? { groupId } : {}),
       },
       include: {
         currentFrameExpense: {
           include: {
             paidBy: true,
-            paidFor: true,
+            paidFor: {
+              include: {
+                participant: {
+                  select: { id: true, leftAt: true },
+                },
+              },
+            },
             category: true,
             documents: true,
           },
@@ -556,6 +566,28 @@ async function createRecurringExpenses() {
         ...destructeredCurrentExpenseRecord
       } = currentExpenseRecord
 
+      // Skip if the payer has left the group (participant.no longer active)
+      if (currentExpenseRecord.paidBy?.leftAt) {
+        console.warn(
+          'Skipping recurring expense for expenseId %s: payer participant %s has left the group',
+          currentExpenseRecord.id,
+          currentExpenseRecord.paidById,
+        )
+        break
+      }
+
+      // Filter out paidFor participants who have left the group
+      const activePaidFor = currentExpenseRecord.paidFor.filter(
+        (pf) => !pf.participant?.leftAt,
+      )
+      if (activePaidFor.length === 0) {
+        console.warn(
+          'Skipping recurring expense for expenseId %s: no active participants in the split',
+          currentExpenseRecord.id,
+        )
+        break
+      }
+
       // Use a transacton to ensure that the only one expense is created for the RecurringExpenseLink
       // just in case two clients are processing the same RecurringExpenseLink at the same time
       const newExpense = await prisma
@@ -567,7 +599,7 @@ async function createRecurringExpenses() {
               paidById: currentExpenseRecord.paidById,
               paidFor: {
                 createMany: {
-                  data: currentExpenseRecord.paidFor.map((paidFor) => ({
+                  data: activePaidFor.map((paidFor) => ({
                     participantId: paidFor.participantId,
                     shares: paidFor.shares,
                   })),
@@ -592,7 +624,13 @@ async function createRecurringExpenses() {
             },
             // Ensure that the same information is available on the returned record that was created
             include: {
-              paidFor: true,
+              paidFor: {
+                include: {
+                  participant: {
+                    select: { id: true, leftAt: true },
+                  },
+                },
+              },
               documents: true,
               category: true,
               paidBy: true,

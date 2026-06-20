@@ -1,5 +1,5 @@
 import { deleteExpense } from '@/lib/api'
-import { verifyUserAuthenticated, verifyGroupMembership } from '@/lib/auth'
+import { verifyUserAuthenticated, verifyGroupOwnership, verifyParticipantOwnership, verifyGroupMembership } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { baseProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
@@ -26,12 +26,17 @@ export const deleteGroupExpenseProcedure = baseProcedure
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Expense not found' })
     }
 
-    // Verify the participant is a member of the group
-    if (participantId) {
-      const isMember = await verifyGroupMembership(groupId, participantId)
-      if (!isMember) {
-        throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not a member of this group' })
-      }
+    // Caller must be either the group owner or own the participant identity
+    const isOwner = await verifyGroupOwnership(hash, groupId)
+    const ownsParticipant = participantId
+      ? await verifyParticipantOwnership(participantId, hash)
+      : false
+    // Backward compatibility: if participant has no hash, fall back to membership check
+    const isMember = !isOwner && !ownsParticipant && participantId
+      ? await verifyGroupMembership(groupId, participantId)
+      : false
+    if (!isOwner && !ownsParticipant && !isMember) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not authorized to delete expenses in this group' })
     }
 
     await deleteExpense(groupId, expenseId, participantId)

@@ -61,3 +61,17 @@ export async function verifyGroupMembership(groupId: string, participantId?: str
   })
   return participant !== null
 }
+
+/**
+ * Verify that a participant belongs to a specific user (by hash).
+ * This links the Participant model to the User model via the new hash field.
+ */
+export async function verifyParticipantOwnership(
+  participantId: string,
+  hash: string,
+): Promise<boolean> {
+  const participant = await prisma.participant.findFirst({
+    where: { id: participantId, hash, leftAt: null },
+  })
+  return participant !== null
+}

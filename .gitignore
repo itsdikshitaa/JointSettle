@@ -1,53 +1,97 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ============================================================
+# JointSettle – .gitignore
+# Stack: Next.js · TypeScript · Prisma (PostgreSQL) · Docker
+# ============================================================
 
-# dependencies
-/node_modules
-/.pnp
+# ─── Dependencies ───────────────────────────────────────────
+node_modules/
+.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
-/coverage
-
-# next.js
-/.next/
+# ─── Next.js build output ───────────────────────────────────
+.next/
 /out/
 
-# production
-/build
+# ─── SWC compiler cache ─────────────────────────────────────
+.swc/
 
-# misc
-.DS_Store
-*.pem
+# ─── Production build ───────────────────────────────────────
+/build/
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-*.env
-!scripts/build.env
-!container.env.example
-!build.env
-
-# vercel
-.vercel
-
-# typescript
+# ─── TypeScript ─────────────────────────────────────────────
 *.tsbuildinfo
 next-env.d.ts
 
-# logs
+# ─── Testing ────────────────────────────────────────────────
+/coverage/
+
+# ─── Environment & secrets ──────────────────────────────────
+# Ignore all env files …
+.env
+.env.*
+*.env
+# … but keep the committed example/template files
+!.env.example
+!container.env.example
+# scripts/build.env is intentional (mock values for Docker build)
+!scripts/build.env
+
+# ─── Prisma ─────────────────────────────────────────────────
+# Generated client is rebuilt on postinstall
+prisma/generated/
+
+# ─── Docker / local DB data ─────────────────────────────────
+postgres-data/
+container.env
+
+# ─── Vercel ─────────────────────────────────────────────────
+.vercel/
+
+# ─── Logs ───────────────────────────────────────────────────
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# db
-postgres-data
+# ─── OS artifacts ───────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
 
-# IDE
+# ─── Editor & IDE ───────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
-.env*
+*.swn
+*~
+.project
+.classpath
+.settings/
+
+# ─── Security / certificates ────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ─── Python (utility scripts) ───────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# ─── Miscellaneous ──────────────────────────────────────────
+*.tgz
+*.tar.gz
+dist/
+tmp/
+.tmp/
