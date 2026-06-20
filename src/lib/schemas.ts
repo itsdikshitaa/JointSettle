@@ -155,10 +155,6 @@ export const expenseFormSchema = z
           new Decimal(0),
         )
         if (!sum.equals(new Decimal(expense.amount))) {
-          // const detail =
-          //   sum < expense.amount
-          //     ? `${((expense.amount - sum) / 100).toFixed(2)} missing`
-          //     : `${((sum - expense.amount) / 100).toFixed(2)} surplus`
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'amountSum',

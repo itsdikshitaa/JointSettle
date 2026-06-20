@@ -42,6 +42,7 @@ export function CategorySelector({
   useEffect(() => {
     setValue(defaultValue)
     onValueChange(defaultValue)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValue])
 
   const selectedCategory =

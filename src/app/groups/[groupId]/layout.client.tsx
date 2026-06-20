@@ -37,7 +37,7 @@ export function GroupLayoutClient({
   // Loading
   if (isLoading || !data) {
     return (
-      <CurrentGroupProvider isLoading groupId={groupId} group={undefined}>
+      <CurrentGroupProvider isLoading groupId={groupId} group={undefined} isOwner={false}>
         <GroupHeader />
         {children}
       </CurrentGroupProvider>
@@ -56,9 +56,11 @@ export function GroupLayoutClient({
     )
   }
 
+  const isOwner = (data as any)?.isOwner ?? false
+
   // Success - group data is available
   return (
-    <CurrentGroupProvider isLoading={false} groupId={groupId} group={data.group}>
+    <CurrentGroupProvider isLoading={false} groupId={groupId} group={data.group} isOwner={isOwner}>
       <GroupHeader />
       {children}
     </CurrentGroupProvider>

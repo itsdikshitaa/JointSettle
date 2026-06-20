@@ -134,9 +134,8 @@ export function ActivityList() {
                     )
                   : undefined
               return (
-                <div className="animate-fade-in-up" style={{ animationDelay: `${(idx % 10) * 50}ms` }}>
+                <div key={activity.id} className="animate-fade-in-up" style={{ animationDelay: `${(idx % 10) * 50}ms` }}>
                   <ActivityItem
-                    key={activity.id}
                     groupId={groupId}
                     activity={activity}
                     participant={participant}

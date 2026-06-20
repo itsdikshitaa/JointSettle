@@ -41,6 +41,7 @@ export function CurrencySelector({
   useEffect(() => {
     setValue(defaultValue)
     onValueChange(defaultValue)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValue])
 
   const selectedCurrency =
@@ -190,6 +191,7 @@ function CurrencyLabel({ currency }: { currency: Currency }) {
   }.png`
   return (
     <div className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={flagUrl} className="w-4" alt="" />
       {currency.name}
       {currency.code ? ` (${currency.code})` : ''}

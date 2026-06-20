@@ -12,15 +12,20 @@ export const getGroupProcedure = baseProcedure
   )
   .query(async ({ input: { groupId, hash } }) => {
     if (!hash) {
-      return { group: null }
+      return { group: null, isOwner: false }
     }
     const isAuthenticated = await verifyUserAuthenticated(hash)
     if (!isAuthenticated) {
-      return { group: null }
+      return { group: null, isOwner: false }
     }
     const group = await prisma.group.findUnique({
       where: { id: groupId },
       include: { participants: true },
     })
-    return { group }
+
+    // Determine if the current user is the group owner
+    const user = await prisma.user.findUnique({ where: { hash } })
+    const isOwner = user !== null && group !== null && group.userId === user.id
+
+    return { group, isOwner }
   })

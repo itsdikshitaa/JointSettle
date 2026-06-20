@@ -14,8 +14,7 @@
     "prettier": "prettier -w src",
     "build-image": "./scripts/build-image.sh",
     "start-container": "docker compose --env-file container.env up",
-    "test": "jest",
-    "generate-currency-data": "ts-node -T ./src/scripts/generateCurrencyData.ts"
+    "test": "jest"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
@@ -69,7 +68,6 @@
     "octokit": "^3.1.2",
     "openai": "^4.25.0",
     "papaparse": "^5.5.3",
-    "pg": "^8.11.3",
     "prisma": "^6.18.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
@@ -100,12 +98,10 @@
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
-    "@types/pg": "^8.10.9",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.6",
     "autoprefixer": "^10",
-    "currency-list": "^1.0.8",
     "dotenv": "^16.3.1",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.7",

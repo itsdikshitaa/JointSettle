@@ -1,10 +1,11 @@
 import { verifyUserAuthenticated } from '@/lib/auth'
+import { randomId } from '@/lib/api'
 import { prisma } from '@/lib/prisma'
 import { baseProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-export const leaveGroupProcedure = baseProcedure
+export const requestLeaveProcedure = baseProcedure
   .input(
     z.object({
       groupId: z.string().min(1),
@@ -21,6 +22,29 @@ export const leaveGroupProcedure = baseProcedure
     // Check participant exists in the group
     const participant = await prisma.participant.findFirst({
       where: { id: participantId, groupId },
+    })
+    if (!participant) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Participant not found' })
+    }
+
+    // Check if participant already has a pending leave request
+    const existingPending = await prisma.leaveRequest.findFirst({
+      where: {
+        participantId,
+        groupId,
+        status: 'pending',
+      },
+    })
+    if (existingPending) {
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'You already have a pending leave request.',
+      })
+    }
+
+    // Check if participant has any expenses
+    const expenseCounts = await prisma.participant.findUnique({
+      where: { id: participantId },
       include: {
         _count: {
           select: {
@@ -30,22 +54,24 @@ export const leaveGroupProcedure = baseProcedure
         },
       },
     })
-    if (!participant) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'Participant not found' })
-    }
-
-    // Check if participant has any expenses
-    if (participant._count.expensesPaidBy > 0 || participant._count.expensesPaidFor > 0) {
+    if (
+      expenseCounts &&
+      (expenseCounts._count.expensesPaidBy > 0 || expenseCounts._count.expensesPaidFor > 0)
+    ) {
       throw new TRPCError({
         code: 'PRECONDITION_FAILED',
         message: 'Cannot leave group. You have expenses in this group.',
       })
     }
 
-    // Mark the participant as left instead of hard-deleting
-    await prisma.participant.update({
-      where: { id: participantId },
-      data: { leftAt: new Date() },
+    // Create the leave request
+    await prisma.leaveRequest.create({
+      data: {
+        id: randomId(),
+        groupId,
+        participantId,
+        status: 'pending',
+      },
     })
 
     return { success: true }

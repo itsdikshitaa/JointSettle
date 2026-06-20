@@ -47,8 +47,9 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Access Hash</label>
+              <label htmlFor="login-hash" className="text-sm font-medium mb-1.5 block">Access Hash</label>
               <Input
+                id="login-hash"
                 placeholder="e.g. aB3xK9mQ"
                 value={hash}
                 onChange={(e) => setHash(e.target.value)}
