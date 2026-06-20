@@ -2,7 +2,7 @@ import { formatDate, getPostBySlug, getPosts } from '@/app/blog/[slug]/helpers'
 import { TrackPage } from '@/components/track-page'
 import { Button } from '@/components/ui/button'
 import { RichText } from 'basehub/react-rich-text'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Pin } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -62,10 +62,21 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
         </Button>
       </div>
       <h1
-        className="mt-4 mb-2 text-3xl sm:text-6xl font-bold"
+        className="mt-4 mb-2 text-3xl sm:text-6xl font-bold flex flex-wrap items-center gap-x-3 gap-y-2"
         style={{ textWrap: 'balance' }}
       >
-        <Link href={`/blog/${slug}`}>{post._title}</Link>
+        {(post.pinned || post._slug === 'welcome-to-jointsettle') && (
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-sm align-middle select-none">
+            <Pin className="w-4 h-4 fill-current rotate-45 shrink-0" />
+            <span>Pinned</span>
+          </span>
+        )}
+        <Link
+          href={`/blog/${slug}`}
+          className="hover:text-primary transition-colors duration-200"
+        >
+          {post._title}
+        </Link>
       </h1>
       <div className="text-muted-foreground flex gap-2 items-center mb-4 text-sm sm:text-base">
         <span>{formatDate(post.date ?? '')}</span>

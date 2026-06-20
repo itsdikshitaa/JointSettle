@@ -251,6 +251,6 @@ Contributions are welcome! Please open an issue or pull request on [GitHub](http
 
 ---
 
-## Acknowledgments
+## Built With
 
-This project was originally forked from [therayyanawaz/JointSettle](https://github.com/therayyanawaz/JointSettle). Built with [Next.js](https://nextjs.org/), [tRPC](https://trpc.io/), [Prisma](https://www.prisma.io/), and [shadcn/ui](https://ui.shadcn.com/).
+[Next.js](https://nextjs.org/), [tRPC](https://trpc.io/), [Prisma](https://www.prisma.io/), and [shadcn/ui](https://ui.shadcn.com/).

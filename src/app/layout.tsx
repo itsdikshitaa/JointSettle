@@ -1,22 +1,23 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
 import { getBlogIndexWithPosts } from '@/app/blog/[slug]/helpers'
-import type { BlogPostSummary } from '@/lib/blog-types'
+import { ClientLayout } from '@/components/client-layout'
 import { FeedbackModal } from '@/components/feedback-button/feedback-button'
 import { Nav } from '@/components/nav'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Button } from '@/components/ui/button'
-import { ClientLayout } from '@/components/client-layout'
 import { Toaster } from '@/components/ui/toaster'
+import type { BlogPostSummary } from '@/lib/blog-types'
 import { env } from '@/lib/env'
 import { TRPCProvider } from '@/trpc/client'
 import { HeartFilledIcon } from '@radix-ui/react-icons'
-import { Space_Grotesk, DM_Sans } from 'next/font/google'
+import { Pin } from 'lucide-react'
 import type { Metadata, Viewport } from 'next'
 import { AxiomWebVitals } from 'next-axiom'
 import { NextIntlClientProvider, useTranslations } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import PlausibleProvider from 'next-plausible'
+import { DM_Sans, Space_Grotesk } from 'next/font/google'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import './globals.css'
@@ -91,7 +92,10 @@ function Content({ children }: { children: React.ReactNode }) {
       <div className="pt-16 flex-1 flex flex-col">{children}</div>
 
       <footer className="relative overflow-hidden border-t border-border/50 bg-gradient-to-b from-background via-background to-blue-950/5 dark:from-background dark:via-background dark:to-blue-950/20">
-        <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" aria-hidden="true" />
+        <div
+          className="absolute inset-0 dot-pattern opacity-30 pointer-events-none"
+          aria-hidden="true"
+        />
         <div className="relative mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Brand Column */}
@@ -108,7 +112,12 @@ function Content({ children }: { children: React.ReactNode }) {
               <p className="text-sm text-muted-foreground">
                 {t.rich('Footer.builtBy', {
                   author: (txt) => (
-                    <a href="https://dikshitaa.tech/" target="_blank" rel="noopener" className="text-foreground hover:text-primary transition-colors underline underline-offset-2 decoration-primary/30">
+                    <a
+                      href="https://dikshitaa.tech/"
+                      target="_blank"
+                      rel="noopener"
+                      className="text-foreground hover:text-primary transition-colors underline underline-offset-2 decoration-primary/30"
+                    >
                       {txt}
                     </a>
                   ),
@@ -128,26 +137,68 @@ function Content({ children }: { children: React.ReactNode }) {
 
             {/* Links Column */}
             <div className="flex flex-col gap-3">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Connect</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Connect
+              </h3>
               <ul className="flex flex-wrap gap-1.5">
                 <li>
-                  <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
-                    <Link target="_blank" href="https://linkedin.com/company/101119877">LinkedIn</Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Link
+                      target="_blank"
+                      href="https://linkedin.com/company/101119877"
+                    >
+                      LinkedIn
+                    </Link>
                   </Button>
                 </li>
                 <li>
-                  <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
-                    <Link target="_blank" href="https://github.com/itsdikshitaa/JointSettle">GitHub</Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Link
+                      target="_blank"
+                      href="https://github.com/itsdikshitaa/JointSettle"
+                    >
+                      GitHub
+                    </Link>
                   </Button>
                 </li>
                 <li>
-                  <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
-                    <Link target="_blank" href="https://www.reddit.com/r/jointsettle/">Reddit</Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Link
+                      target="_blank"
+                      href="https://www.reddit.com/r/jointsettle/"
+                    >
+                      Reddit
+                    </Link>
                   </Button>
                 </li>
                 <li>
-                  <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
-                    <Link target="_blank" href="https://www.indiehackers.com/product/jointsettle">IndieHackers</Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Link
+                      target="_blank"
+                      href="https://www.indiehackers.com/product/jointsettle"
+                    >
+                      IndieHackers
+                    </Link>
                   </Button>
                 </li>
               </ul>
@@ -156,7 +207,11 @@ function Content({ children }: { children: React.ReactNode }) {
                   donationUrl={env.STRIPE_DONATION_LINK}
                   defaultTab="support"
                 >
-                  <Button variant="ghost" size="sm" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 -ml-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 -ml-2"
+                  >
                     <HeartFilledIcon className="w-3.5 h-3.5 mr-1.5" />
                     {t('Support.buttonLabel')}
                   </Button>
@@ -166,18 +221,39 @@ function Content({ children }: { children: React.ReactNode }) {
 
             {/* Blog Column */}
             <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-1">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">On our blog</h3>
-              <Suspense fallback={<div className="text-sm text-muted-foreground">Loading…</div>}>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                On our blog
+              </h3>
+              <Suspense
+                fallback={
+                  <div className="text-sm text-muted-foreground">Loading…</div>
+                }
+              >
                 <BlogPostsList />
               </Suspense>
               <div className="flex gap-2 mt-1">
-                <Button size="sm" variant="outline" asChild className="text-xs h-7">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  asChild
+                  className="text-xs h-7"
+                >
                   <a href="/blog/feed/rss.xml">RSS</a>
                 </Button>
-                <Button size="sm" variant="outline" asChild className="text-xs h-7">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  asChild
+                  className="text-xs h-7"
+                >
                   <a href="/blog/feed/feed.xml">Atom</a>
                 </Button>
-                <Button size="sm" variant="outline" asChild className="text-xs h-7">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  asChild
+                  className="text-xs h-7"
+                >
                   <a href="/blog/feed/feed.json">JSON</a>
                 </Button>
               </div>
@@ -185,7 +261,10 @@ function Content({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="mt-12 pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} JointSettle. All rights reserved.</p>
+            <p>
+              &copy; {new Date().getFullYear()} JointSettle. All rights
+              reserved.
+            </p>
             <p className="flex items-center gap-1">
               Crafted with care
               <span className="inline-block">&#x2728;</span>
@@ -206,7 +285,11 @@ export default async function RootLayout({
   const locale = await getLocale()
   const messages = await getMessages()
   return (
-    <html lang={locale} suppressHydrationWarning className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={`${spaceGrotesk.variable} ${dmSans.variable}`}
+    >
       {env.PLAUSIBLE_DOMAIN && (
         <PlausibleProvider
           domain={env.PLAUSIBLE_DOMAIN}
@@ -216,8 +299,15 @@ export default async function RootLayout({
       )}
       <AxiomWebVitals />
       <ApplePwaSplash icon="/logo-with-text.png" color="#2563EB" />
-      <body className="min-h-[100dvh] flex flex-col items-stretch bg-background font-sans" suppressHydrationWarning>
-        <script dangerouslySetInnerHTML={{ __html: `(()=>{const e=new MutationObserver(()=>{document.querySelectorAll('[bis_skin_checked]').forEach(n=>n.removeAttribute('bis_skin_checked'));});e.observe(document.documentElement,{attributes:true,subtree:true,attributeFilter:['bis_skin_checked']});})()` }} />
+      <body
+        className="min-h-[100dvh] flex flex-col items-stretch bg-background font-sans"
+        suppressHydrationWarning
+      >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(()=>{const e=new MutationObserver(()=>{document.querySelectorAll('[bis_skin_checked]').forEach(n=>n.removeAttribute('bis_skin_checked'));});e.observe(document.documentElement,{attributes:true,subtree:true,attributeFilter:['bis_skin_checked']});})()`,
+          }}
+        />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"
@@ -228,7 +318,9 @@ export default async function RootLayout({
             <Suspense>
               <ProgressBar />
             </Suspense>
-            <ClientLayout><Content>{children}</Content></ClientLayout>
+            <ClientLayout>
+              <Content>{children}</Content>
+            </ClientLayout>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
@@ -245,9 +337,12 @@ async function BlogPostsList() {
           <Button variant="link" asChild size="sm" className="-ml-3 h-7">
             <Link
               href={`/blog/${post._slug}`}
-              className="!text-foreground font-normal"
+              className="!text-foreground font-normal flex items-center gap-1.5"
             >
-              {post._title}
+              {(post.pinned || post._slug === 'welcome-to-jointsettle') && (
+                <Pin className="w-3.5 h-3.5 text-amber-500 fill-current rotate-45 shrink-0" />
+              )}
+              <span>{post._title}</span>
             </Link>
           </Button>
         </li>

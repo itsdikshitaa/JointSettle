@@ -1,10 +1,10 @@
 import { formatDate, getBlogIndexWithPosts } from '@/app/blog/[slug]/helpers'
 import { TrackPage } from '@/components/track-page'
 import { Button } from '@/components/ui/button'
+import type { BlogIndexMetadata, BlogPostSummary } from '@/lib/blog-types'
 import { basehub } from 'basehub'
 import { RichText } from 'basehub/react-rich-text'
-import type { BlogIndexMetadata, BlogPostSummary } from '@/lib/blog-types'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Pin } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -65,10 +65,21 @@ export default async function BlogPage() {
                 {formatDate(post.date ?? '')}
               </div>
               <h2
-                className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3"
+                className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 flex flex-wrap items-center gap-x-2.5 gap-y-1.5"
                 style={{ textWrap: 'balance' }}
               >
-                <Link href={`/blog/${post._slug}`}>{post._title}</Link>
+                {(post.pinned || post._slug === 'welcome-to-jointsettle') && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-sm align-middle select-none">
+                    <Pin className="w-3 h-3 fill-current rotate-45 shrink-0" />
+                    <span>Pinned</span>
+                  </span>
+                )}
+                <Link
+                  href={`/blog/${post._slug}`}
+                  className="hover:text-primary transition-colors duration-200"
+                >
+                  {post._title}
+                </Link>
               </h2>
               <div className="prose dark:prose-invert">{post.subtitle}</div>
               <div className="mt-1 sm:mt-2">

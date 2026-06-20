@@ -26,6 +26,7 @@ export interface BlogPost {
   _id: string
   _title: string
   _slug: string
+  pinned?: boolean
   subtitle: string | null
   date: string | null
   body?: { json: { content: unknown[] } } | null
@@ -39,6 +40,7 @@ export interface BlogPostSummary {
   _id: string
   _title: string
   _slug: string
+  pinned?: boolean
   subtitle: string | null
   date: string | null
   coverImage: BlogImage | null
