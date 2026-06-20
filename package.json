@@ -1,7 +1,22 @@
 {
   "name": "jointsettle",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Minimalist, open-source expense splitting app — a privacy-conscious alternative to Splitwise. No email, no personal data, full control.",
+  "keywords": ["expense-splitting", "splitwise-alternative", "group-expenses", "privacy-first", "nextjs", "trpc", "typescript"],
+  "homepage": "https://github.com/itsdikshitaa/JointSettle#readme",
+  "bugs": {
+    "url": "https://github.com/itsdikshitaa/JointSettle/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsdikshitaa/JointSettle.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "itsdikshitaa",
+    "url": "https://github.com/itsdikshitaa"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

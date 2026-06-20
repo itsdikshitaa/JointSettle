@@ -2,8 +2,6 @@
 
 **JointSettle** is a minimalist, open-source web application for splitting expenses among groups of people. It is designed as a privacy-conscious alternative to Splitwise or Tricount — no email required, no personal data collected, and full control over your group finances.
 
-The live application is deployed at: **https://jointsettle.vercel.app**
-
 ---
 
 ## Features
@@ -211,46 +209,6 @@ All monetary amounts are stored as **integers in minor units** (e.g., cents).
 
 ---
 
-## Deployment
-
-### Vercel (Primary)
-
-The app is configured for Vercel deployment via `vercel.json`:
-
-```json
-{
-  "framework": "nextjs",
-  "buildCommand": "npx prisma db push && npx ts-node --transpile-only prisma/seed.ts && npx prisma generate && next build"
-}
-```
-
-**Required Environment Variables on Vercel:**
-- `DATABASE_URL` — PostgreSQL connection string
-- `POSTGRES_URL_NON_POOLING` — Direct connection string
-- `NEXT_PUBLIC_BASE_URL` — Production URL
-- Any optional feature keys you enable
-
-**Deploy:**
-```bash
-npx vercel --prod
-```
-
-### Docker
-
-A multi-stage `Dockerfile` is provided for containerized deployment:
-
-```bash
-docker build -t jointsettle .
-docker run -p 3000:3000 jointsettle
-```
-
-### CI/CD
-
-- **CI**: GitHub Actions runs TypeScript checking, ESLint, and Prettier formatting on every push to `main`.
-- **CD**: Pushing a tag triggers Docker image build and publish to `ghcr.io`.
-
----
-
 ## AI Tools Used During Development
 
 This project was developed with assistance from AI coding agents:
@@ -269,12 +227,30 @@ AI tools were used for:
 
 ---
 
+## Deployment
+
+### Vercel (Primary)
+
+The app is configured for Vercel deployment. Set up the required environment variables (`DATABASE_URL`, `POSTGRES_URL_NON_POOLING`, `NEXT_PUBLIC_BASE_URL`) and deploy:
+
+```bash
+npx vercel --prod
+```
+
+---
+
 ## License
 
-This project is open source. See the [LICENSE](./LICENSE) file for details.
+This project is open source under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ---
 
 ## Contributing
 
 Contributions are welcome! Please open an issue or pull request on [GitHub](https://github.com/itsdikshitaa/JointSettle).
+
+---
+
+## Acknowledgments
+
+This project was originally forked from [therayyanawaz/JointSettle](https://github.com/therayyanawaz/JointSettle). Built with [Next.js](https://nextjs.org/), [tRPC](https://trpc.io/), [Prisma](https://www.prisma.io/), and [shadcn/ui](https://ui.shadcn.com/).

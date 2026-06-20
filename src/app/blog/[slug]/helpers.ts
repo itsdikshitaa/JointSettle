@@ -1,5 +1,6 @@
 import { basehub } from 'basehub'
 import type { BlogPost, BlogPostSummary, BlogPostSitemap, BlogIndexLanding } from '@/lib/blog-types'
+import { MOCK_POSTS } from '@/lib/mock-blog-data'
 
 export async function getPostBySlug(slug: string) {
   try {
@@ -23,9 +24,9 @@ export async function getPostBySlug(slug: string) {
       },
     })) as { blogIndex: { blogPosts: { items: BlogPost[] } } }
 
-    return blogIndex.blogPosts.items.at(0)
+    return blogIndex.blogPosts.items.at(0) || MOCK_POSTS.find((p) => p._slug === slug)
   } catch {
-    return undefined
+    return MOCK_POSTS.find((p) => p._slug === slug)
   }
 }
 
@@ -46,10 +47,14 @@ export async function getPosts() {
         },
       },
     })) as { blogIndex: { blogPosts: { items: BlogPostSitemap[] } } }
-    const { blogPosts } = blogIndex
-    return blogPosts.items
+    
+    if (blogIndex.blogPosts.items.length === 0) {
+      return MOCK_POSTS.map(p => ({ _slug: p._slug, _sys: { lastModifiedAt: p.date! } }))
+    }
+    
+    return blogIndex.blogPosts.items
   } catch {
-    return []
+    return MOCK_POSTS.map(p => ({ _slug: p._slug, _sys: { lastModifiedAt: p.date! } }))
   }
 }
 
@@ -62,8 +67,7 @@ export async function getBlogIndexWithPosts(): Promise<BlogIndexLanding> {
         blogPosts: {
           __args: {
             orderBy: 'date__DESC',
-            filter:
-              process.env.NODE_ENV === 'production' ? { isPublished: true } : {},
+            filter: process.env.NODE_ENV === 'production' ? { isPublished: true } : {},
           },
           items: {
             _id: true,
@@ -76,12 +80,29 @@ export async function getBlogIndexWithPosts(): Promise<BlogIndexLanding> {
         },
       },
     })) as { blogIndex: BlogIndexLanding }
+    
+    if (blogIndex.blogPosts.items.length === 0) {
+      throw new Error('Fallback to mock')
+    }
+    
     return blogIndex
   } catch {
     return {
-      title: '',
-      subtitle: { json: { content: [] }, plainText: '' },
-      blogPosts: { items: [] },
+      title: 'JointSettle Blog',
+      subtitle: {
+        plainText: 'News, tips, and updates from the JointSettle team.',
+        json: {
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'News, tips, and updates from the JointSettle team.' }],
+            },
+          ],
+        },
+      },
+      blogPosts: {
+        items: MOCK_POSTS as BlogPostSummary[],
+      },
     }
   }
 }

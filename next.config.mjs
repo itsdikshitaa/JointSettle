@@ -12,6 +12,7 @@ const remotePatterns = [
   { hostname: 'avatars.githubusercontent.com' },
   { hostname: 'basehub.earth' },
   { hostname: 'assets.basehub.com' },
+  { hostname: 'images.unsplash.com' },
 ]
 
 // S3 Storage
